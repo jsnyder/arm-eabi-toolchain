@@ -13,7 +13,7 @@ ifneq ($(USER),root)
 endif
 
 gcc44patch:
-    patch -N -p0 < gcc-44.patch
+	patch -N -p0 < gcc-44.patch
 
 gmp: sudomode
 	sudo -u $(SUDO_USER) mkdir -p build/gmp && cd build/gmp && \

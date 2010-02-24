@@ -12,6 +12,9 @@ ifneq ($(USER),root)
 	@exit 1
 endif
 
+gcc44patch:
+    patch -N -p0 < gcc-44.patch
+
 gmp: sudomode
 	sudo -u $(SUDO_USER) mkdir -p build/gmp && cd build/gmp && \
 	(./config.status || sudo -u $(SUDO_USER) ../../gmp-*/configure --disable-shared) && \

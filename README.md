@@ -32,6 +32,7 @@ this again for later steps (files needed will be extracted).
 Next prep for building the main toolchain:
 
 > mkdir -p $HOME/arm-cs-tools/bin
+>
 > export PATH=$HOME/arm-cs-tools/bin:$PATH
 
 Next build the toolchain:

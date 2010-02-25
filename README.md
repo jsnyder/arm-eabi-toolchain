@@ -11,8 +11,8 @@ Requirements
 You will need to have GCC, make, binutils and latex installed on your machine
 to compile all of this. You can get all of these on Mac OS X, except LaTeX, by
 just installing the Apple Developer Tools which are free
-(here)[http://developer.apple.com/Tools/]. LaTeX can be acquired from here:
-(http://tug.org/mactex/)[http://tug.org/mactex/] (It should be possible to do
+[here](http://developer.apple.com/Tools/). LaTeX can be acquired from here:
+[http://tug.org/mactex/](http://tug.org/mactex/) (It should be possible to do
 this build without using LaTeX, which is just used for documentation, if I
 find a solution, I’ll update the Makefile)
 

@@ -19,7 +19,11 @@ ifneq ($(USER),root)
 endif
 
 $(LOCAL_SOURCE):
+ifeq ($(USER),root)
+	sudo -u $(SUDO_USER) curl -LO $(SOURCE_URL)
+else
 	curl -LO $(SOURCE_URL)
+endif
 
 download: $(LOCAL_SOURCE)
 	@(t1=`md5 $(LOCAL_SOURCE) | cut -f 4 -d " " -` && \
@@ -27,24 +31,36 @@ download: $(LOCAL_SOURCE)
 	echo "Bad Checksum! Please remove the following file and retry:\n$(LOCAL_SOURCE)")
 
 $(LOCAL_BASE)/%-$(CS_VERSION).tar.bz2 : download
-	tar -jxvf $(LOCAL_SOURCE) --include='*$@*'
+ifeq ($(USER),root)
+	sudo -u $(SUDO_USER) tar -jxvf $(LOCAL_SOURCE) --include='*$**'
+else
+	tar -jxvf $(LOCAL_SOURCE) --include='*$**'
+endif
 
 %-stable : $(LOCAL_BASE)/%-$(CS_VERSION).tar.bz2
+ifeq ($(USER),root)
+	sudo -u $(SUDO_USER) tar -jxf $<
+else
 	tar -jxf $<
+endif
 
 %-4.4 : $(LOCAL_BASE)/%-$(CS_VERSION).tar.bz2
+ifeq ($(USER),root)
+	sudo -u $(SUDO_USER) tar -jxf $<
+else
 	tar -jxf $<
+endif
 
 gcc44patch: gcc-4.4
 	patch -N -p0 < gcc-44.patch
 
-gmp: sudomode gmp-stable
+gmp: gmp-stable sudomode
 	sudo -u $(SUDO_USER) mkdir -p build/gmp && cd build/gmp && \
 	(./config.status || sudo -u $(SUDO_USER) ../../gmp-*/configure --disable-shared) && \
 	sudo -u $(SUDO_USER) $(MAKE) -j$(PROCS) CFLAGS="-fast" all && \
 	$(MAKE) install
 
-mpfr: sudomode gmp mpfr-stable
+mpfr: gmp mpfr-stable sudomode
 	sudo -u $(SUDO_USER) mkdir -p build/mpfr && cd build/mpfr && \
 	(./config.status || sudo -u $(SUDO_USER) ../../mpfr-*/configure LDFLAGS="-Wl,-search_paths_first" --disable-shared) && \
 	sudo -u $(SUDO_USER) $(MAKE) -j$(PROCS) CFLAGS="-fast" all && \
@@ -80,5 +96,6 @@ cross-gdb: gdb-stable
 	$(MAKE) -j$(PROCS) && \
   $(MAKE) install
 
+.PHONY : clean
 clean:
 	rm -rf build

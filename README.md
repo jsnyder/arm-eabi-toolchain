@@ -28,6 +28,8 @@ If you haven’t installed gmp or mpfr, install them first:
 
 > sudo make install-deps
 
+NOTE: The first time you run this, it will attempt to download the tarball for the CodeSourcery sources, which may take some time.  It should not need to do this again for later steps (files needed will be extracted).
+
 
 Next prep for building the main toolchain:
 

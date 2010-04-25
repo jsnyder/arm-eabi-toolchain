@@ -84,10 +84,11 @@ cross-g++: cross-binutils cross-gcc cross-newlib gcc-4.4 gcc44patch
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) install
 
+NEWLIB_FLAGS="-ffunction-sections -fdata-sections -DPREFER_SIZE_OVER_SPEED -D__OPTIMIZE_SIZE__ -Os -fomit-frame-pointer -fno-unroll-loops -D__BUFSIZ__=256 -DREENTRANT_SYSCALLS_PROVIDED -DMALLOC_PROVIDED -mfloat-abi=soft -mabi=aapcs"
 cross-newlib: cross-binutils cross-gcc newlib-stable
 	mkdir -p build/newlib && cd build/newlib && \
 	(./config.status || ../../newlib-*/configure --prefix=$(PREFIX) --target=$(TARGET) --disable-newlib-supplied-syscalls  --disable-libgloss --disable-nls --disable-shared) && \
-	$(MAKE) -j$(PROCS) CFLAGS_FOR_TARGET="-ffunction-sections -fdata-sections -DPREFER_SIZE_OVER_SPEED -D__OPTIMIZE_SIZE__ -Os -fomit-frame-pointer -fno-unroll-loops -D__BUFSIZ__=256 -DREENTRANT_SYSCALLS_PROVIDED" && \
+	$(MAKE) -j$(PROCS) CFLAGS_FOR_TARGET=$(NEWLIB_FLAGS) CCASFLAGS=$(NEWLIB_FLAGS) && \
 	$(MAKE) install
 
 cross-gdb: gdb-stable

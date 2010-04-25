@@ -1,5 +1,5 @@
 TARGET=arm-eabi
-PREFIX=$(HOME)/arm-cs-tools/
+PREFIX=$(HOME)/Projects/arm-eabi-tools/
 PROCS=3
 CS_VERSION = 2009q3-68
 LOCAL_BASE = arm-$(CS_VERSION)-arm-none-eabi
@@ -87,7 +87,7 @@ cross-g++: cross-binutils cross-gcc cross-newlib gcc-4.4 gcc44patch
 cross-newlib: cross-binutils cross-gcc newlib-stable
 	mkdir -p build/newlib && cd build/newlib && \
 	(./config.status || ../../newlib-*/configure --prefix=$(PREFIX) --target=$(TARGET) --disable-newlib-supplied-syscalls  --disable-libgloss --disable-nls --disable-shared) && \
-	$(MAKE) -j$(PROCS) CFLAGS_FOR_TARGET="-ffunction-sections -fdata-sections -DPREFER_SIZE_OVER_SPEED -D__OPTIMIZE_SIZE__ -Os -fomit-frame-pointer -D__BUFSIZ__=256" && \
+	$(MAKE) -j$(PROCS) CFLAGS_FOR_TARGET="-ffunction-sections -fdata-sections -DPREFER_SIZE_OVER_SPEED -D__OPTIMIZE_SIZE__ -Os -fomit-frame-pointer -fno-unroll-loops -D__BUFSIZ__=256 -DREENTRANT_SYSCALLS_PROVIDED" && \
 	$(MAKE) install
 
 cross-gdb: gdb-stable

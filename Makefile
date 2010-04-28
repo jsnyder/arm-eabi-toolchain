@@ -32,9 +32,9 @@ download: $(LOCAL_SOURCE)
 
 $(LOCAL_BASE)/%-$(CS_VERSION).tar.bz2 : download
 ifeq ($(USER),root)
-	sudo -u $(SUDO_USER) tar -jxvf $(LOCAL_SOURCE) --recursion 
+	sudo -u $(SUDO_USER) tar -jxvf $(LOCAL_SOURCE) '*$**'
 else
-	tar -jxvf $(LOCAL_SOURCE) --recursion
+	tar -jxvf $(LOCAL_SOURCE) '*$**'
 endif
 
 %-stable : $(LOCAL_BASE)/%-$(CS_VERSION).tar.bz2
@@ -52,7 +52,7 @@ else
 endif
 
 gcc44patch: gcc-4.4
-	patch -N -p0 < gcc-44.patch
+	patch -N -p0 < patches/gcc-44.patch
 
 gmp: gmp-stable sudomode
 	sudo -u $(SUDO_USER) mkdir -p build/gmp && cd build/gmp ; \

@@ -1,0 +1,8 @@
+arm-2009q3-68-arm-none-eabi.src.tar.bz2
+arm-2009q3-68-arm-none-eabi/
+binutils-stable/
+build/
+gcc-4.*/
+newlib-stable/
+gdb-stable/
+

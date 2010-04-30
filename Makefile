@@ -28,15 +28,17 @@ else
 endif
 
 download: $(LOCAL_SOURCE)
-	@(t1=`md5 $(LOCAL_SOURCE) | cut -f 4 -d " " -` && \
+	@(t1=`openssl md5 $(LOCAL_SOURCE) | cut -f 2 -d " " -` && \
 	test $$t1 = $(MD5_CHECKSUM) || \
 	echo "Bad Checksum! Please remove the following file and retry:\n$(LOCAL_SOURCE)")
 
 $(LOCAL_BASE)/%-$(CS_VERSION).tar.bz2 : download
 ifeq ($(USER),root)
-	sudo -u $(SUDO_USER) tar -jxvf $(LOCAL_SOURCE) '*$**'
+	@(tgt=`tar -jtf $(LOCAL_SOURCE) | grep  $*` && \
+	sudo -u $(SUDO_USER) tar -jxvf $(LOCAL_SOURCE) $$tgt)
 else
-	tar -jxvf $(LOCAL_SOURCE) '*$**'
+	@(tgt=`tar -jtf $(LOCAL_SOURCE) | grep  $*` && \
+	tar -jxvf $(LOCAL_SOURCE) $$tgt)
 endif
 
 %-4.4-$(CS_BASE) : $(LOCAL_BASE)/%-$(CS_VERSION).tar.bz2

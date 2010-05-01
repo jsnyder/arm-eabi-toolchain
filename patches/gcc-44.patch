@@ -1,5 +1,5 @@
---- gcc-4.4/gcc/cp/Make-lang.in.orig	2009-10-21 19:21:13.000000000 -0500
-+++ gcc-4.4/gcc/cp/Make-lang.in	2009-10-21 19:31:53.000000000 -0500
+--- gcc-4.4-2010q1/gcc/cp/Make-lang.in.orig	2009-10-21 19:21:13.000000000 -0500
++++ gcc-4.4-2010q1/gcc/cp/Make-lang.in	2009-10-21 19:31:53.000000000 -0500
 @@ -72,8 +72,8 @@
  # Shared with C front end:
  CXX_C_OBJS = attribs.o c-common.o c-format.o c-pragma.o c-semantics.o c-lex.o \

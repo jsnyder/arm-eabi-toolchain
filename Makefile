@@ -58,6 +58,9 @@ endif
 gcc44patch: gcc-4.4-$(CS_BASE)
 	patch -N -p0 < patches/gcc-44.patch
 
+multilibbash: gcc-4.4-$(CS_BASE)
+	patch -N -p0 < patches/gcc-multilib-bash.patch
+
 gmp: gmp-$(CS_BASE) sudomode
 	sudo -u $(SUDO_USER) mkdir -p build/gmp && cd build/gmp ; \
 	pushd ../../gmp-* ; \
@@ -85,7 +88,7 @@ cross-binutils: binutils-$(CS_BASE)
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) install
 
-cross-gcc: cross-binutils gcc-4.4-$(CS_BASE) gcc44patch
+cross-gcc: cross-binutils gcc-4.4-$(CS_BASE) gcc44patch multilibbash
 	mkdir -p build/gcc && cd build/gcc && \
 	pushd ../../gcc-* ; \
 	make clean ; \
@@ -94,7 +97,7 @@ cross-gcc: cross-binutils gcc-4.4-$(CS_BASE) gcc44patch
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) install
 
-cross-g++: cross-binutils cross-gcc cross-newlib gcc-4.4-$(CS_BASE) gcc44patch
+cross-g++: cross-binutils cross-gcc cross-newlib gcc-4.4-$(CS_BASE) gcc44patch multilibbash
 	mkdir -p build/g++ && cd build/g++ && \
 	../../gcc-*/configure --prefix=$(PREFIX) --target=$(TARGET) --enable-languages="c++" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls --disable-libssp --with-newlib --without-headers --disable-shared --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch --disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs --enable-libstdcxx-allocator=malloc --enable-cxx-flags="-ffunction-sections -fdata-sections -fomit-frame-pointer" && \
 	$(MAKE) -j$(PROCS) && \

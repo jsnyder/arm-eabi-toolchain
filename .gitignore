@@ -4,3 +4,4 @@ newlib-*
 gdb-*
 mpfr-*
 binutils-*
+arm-*

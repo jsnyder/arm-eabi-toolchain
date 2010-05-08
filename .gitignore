@@ -1,7 +1,7 @@
-arm-*-arm-none-eabi*
-binutils-*
-build/
-gcc-4.*/
+build
+gcc-*
 newlib-*
 gdb-*
-
+mpfr-*
+binutils-*
+arm-*

@@ -57,3 +57,9 @@ Once you’re done, you’ll likely want to add the path where the compiler was
 installed to to your .bash_profile, .zshrc, etc..:
 
 > export PATH=$HOME/arm-cs-tools/bin:$PATH
+
+Special Thanks
+--------------
+
+Special thanks to Rob Emanuele for the basis of this Makefile:
+http://elua-development.2368040.n2.nabble.com/Building-GCC-for-Cortex-td2421927.html

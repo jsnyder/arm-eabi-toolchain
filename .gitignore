@@ -5,3 +5,4 @@ gdb-*
 mpfr-*
 binutils-*
 arm-*
+.DS_Store

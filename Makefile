@@ -103,7 +103,7 @@ cross-g++: cross-binutils cross-gcc cross-newlib gcc-4.4-$(CS_BASE) gcc44patch m
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) install
 
-NEWLIB_FLAGS="-ffunction-sections -fdata-sections -DPREFER_SIZE_OVER_SPEED -D__OPTIMIZE_SIZE__ -Os -fomit-frame-pointer -fno-unroll-loops -D__BUFSIZ__=256 -DREENTRANT_SYSCALLS_PROVIDED -D__DYNAMIC_REENT__"
+NEWLIB_FLAGS="-ffunction-sections -fdata-sections -DPREFER_SIZE_OVER_SPEED -D__OPTIMIZE_SIZE__ -Os -fomit-frame-pointer -fno-unroll-loops -D__BUFSIZ__=256 -DREENTRANT_SYSCALLS_PROVIDED -D__DYNAMIC_REENT__ -D_WANT_REENT_SMALL"
 cross-newlib: cross-binutils cross-gcc newlib-$(CS_BASE)
 	mkdir -p build/newlib && cd build/newlib && \
 	pushd ../../newlib-* ; \

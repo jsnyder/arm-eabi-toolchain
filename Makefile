@@ -61,6 +61,9 @@ gcc44patch: gcc-4.4-$(CS_BASE)
 multilibbash: gcc-4.4-$(CS_BASE)
 	patch -N -p0 < patches/gcc-multilib-bash.patch
 
+newlibpatch: newlib-$(CS_BASE)
+	patch -N -p0 < patches/newlib-freertos.patch
+
 gmp: gmp-$(CS_BASE) sudomode
 	sudo -u $(SUDO_USER) mkdir -p build/gmp && cd build/gmp ; \
 	pushd ../../gmp-* ; \
@@ -103,13 +106,13 @@ cross-g++: cross-binutils cross-gcc cross-newlib gcc-4.4-$(CS_BASE) gcc44patch m
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) install
 
-NEWLIB_FLAGS="-ffunction-sections -fdata-sections -DPREFER_SIZE_OVER_SPEED -D__OPTIMIZE_SIZE__ -Os -fno-unroll-loops -fomit-frame-pointer -D__BUFSIZ__=256 -DREENTRANT_SYSCALLS_PROVIDED -D__DYNAMIC_REENT__ -D_WANT_REENT_SMALL"
-cross-newlib: cross-binutils cross-gcc newlib-$(CS_BASE)
+NEWLIB_FLAGS="-ffunction-sections -fdata-sections -Os -fno-unroll-loops -fomit-frame-pointer -D__BUFSIZ__=128 -DREENTRANT_SYSCALLS_PROVIDED=1"
+cross-newlib: cross-binutils cross-gcc newlib-$(CS_BASE) newlibpatch
 	mkdir -p build/newlib && cd build/newlib && \
 	pushd ../../newlib-* ; \
 	make clean ; \
 	popd ; \
-	../../newlib-*/configure --prefix=$(PREFIX) --target=$(TARGET) --disable-newlib-supplied-syscalls --disable-libgloss --disable-nls --disable-shared --enable-newlib-io-long-long && \
+	../../newlib-*/configure --prefix=$(PREFIX) --target=$(TARGET) --disable-newlib-supplied-syscalls --disable-libgloss --disable-nls --disable-shared --enable-newlib-io-long-long --enable-target-optspace --enable-newlib-multithread --enable-newlib-reent-small --disable-newlib-atexit-alloc && \
 	$(MAKE) -j$(PROCS) CFLAGS_FOR_TARGET=$(NEWLIB_FLAGS) CCASFLAGS=$(NEWLIB_FLAGS) && \
 	$(MAKE) install
 

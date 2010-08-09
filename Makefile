@@ -111,7 +111,7 @@ cross-newlib: cross-binutils cross-gcc newlib-$(CS_BASE)
 	pushd ../../newlib-* ; \
 	make clean ; \
 	popd ; \
-	../../newlib-*/configure --prefix=$(PREFIX) --target=$(TARGET) --disable-newlib-supplied-syscalls --disable-libgloss --disable-nls --disable-shared && \
+	../../newlib-*/configure --prefix=$(PREFIX) --target=$(TARGET) --disable-newlib-supplied-syscalls --disable-libgloss --disable-nls --disable-shared --enable-newlib-io-long-long && \
 	$(MAKE) -j$(PROCS) CFLAGS_FOR_TARGET=$(NEWLIB_FLAGS) CCASFLAGS=$(NEWLIB_FLAGS) && \
 	$(MAKE) install
 

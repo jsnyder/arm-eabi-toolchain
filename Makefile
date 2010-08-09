@@ -62,7 +62,7 @@ multilibbash: gcc-4.4-$(CS_BASE)
 	patch -N -p0 < patches/gcc-multilib-bash.patch
 
 newlibpatch: newlib-$(CS_BASE)
-	patch -N -p0 < patches/newlib-freertos.patch
+	patch -N -p1 < patches/newlib-freertos.patch
 
 gmp: gmp-$(CS_BASE) sudomode
 	sudo -u $(SUDO_USER) mkdir -p build/gmp && cd build/gmp ; \

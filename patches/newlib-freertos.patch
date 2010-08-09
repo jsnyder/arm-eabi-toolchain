@@ -1,9 +1,11 @@
---- newlib-2010q1/newlib/libc/include/sys/config.h.orig
-+++ newlib-2010q1/newlib/libc/include/sys/config.h
+diff --git a/newlib-2010q1/newlib/libc/include/sys/config.h b/newlib-2010q1/newlib/libc/include/sys/config.h
+index 3084193..f8825e2 100644
+--- a/newlib-2010q1/newlib/libc/include/sys/config.h
++++ b/newlib-2010q1/newlib/libc/include/sys/config.h
 @@ -125,6 +125,11 @@
  #define _REENT_SMALL
  #endif /* __m32c__ */
-
+ 
 +/* For github.com/hugovincent/mbed-freertos */
 +#if defined(__thumb__) || defined(__thumb2__) || defined(__arm__)
 +#define __DYNAMIC_REENT__
@@ -12,9 +14,11 @@
  #ifdef __thumb2__
  /* Thumb-2 based ARMv7M devices are really small.  */
  #define _REENT_SMALL
---- newlib-2010q1/newlib/libc/include/sys/features.h.orig
-+++ newlib-2010q1/newlib/libc/include/sys/features.h
-@@ -175,6 +175,12 @@ extern "C" {
+diff --git a/newlib-2010q1/newlib/libc/include/sys/features.h b/newlib-2010q1/newlib/libc/include/sys/features.h
+index e43f261..8bb134b 100644
+--- a/newlib-2010q1/newlib/libc/include/sys/features.h
++++ b/newlib-2010q1/newlib/libc/include/sys/features.h
+@@ -175,6 +175,13 @@ extern "C" {
  #define _POSIX_TIMERS				     1
  #endif
  
@@ -22,6 +26,45 @@
 +#if defined(__thumb__) || defined(__thumb2__) || defined(__arm__)
 +#define _POSIX_TIMERS					1
 +#define _POSIX_MONOTONIC_CLOCK			200112L
++#define _POSIX_REALTIME_SIGNALS			1
++#endif
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/newlib-2010q1/newlib/libc/include/sys/signal.h b/newlib-2010q1/newlib/libc/include/sys/signal.h
+index 39d8bc6..d5d8e81 100644
+--- a/newlib-2010q1/newlib/libc/include/sys/signal.h
++++ b/newlib-2010q1/newlib/libc/include/sys/signal.h
+@@ -17,6 +17,13 @@ extern "C" {
+ 
+ typedef unsigned long sigset_t;
+ 
++/* Temporary hack to get the signal includes in FreeRTOS */
++#if defined(__arm__) || defined(__thumb__) || defined(__thumb2__)
++#define FREERTOS_SIGNAL_HACK
++#define __rtems__
++#include <sys/types.h>
++#endif
++
+ #if defined(__rtems__)
+ 
+ #if defined(_POSIX_REALTIME_SIGNALS)
+@@ -83,7 +90,7 @@ typedef struct {
+  *      application should not use both simultaneously.
+  */
+ 
+-typedef void (*_sig_func_ptr)();
++typedef void (*_sig_func_ptr)(int);
+ 
+ struct sigaction {
+   int         sa_flags;       /* Special flags to affect behavior of signal */
+@@ -334,6 +341,10 @@ int _EXFUN(sigqueue, (pid_t pid, int signo, const union sigval value));
+ #endif
+ #endif
+ 
++#if defined(FREERTOS_SIGNAL_HACK)
++#undef __rtems__
 +#endif
 +
  #ifdef __cplusplus

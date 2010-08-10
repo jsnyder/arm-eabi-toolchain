@@ -70,3 +70,75 @@ index 39d8bc6..d5d8e81 100644
  #ifdef __cplusplus
  }
  #endif
+diff --git a/newlib-2010q1/newlib/libc/signal/Makefile.am b/newlib-2010q1/newlib/libc/signal/Makefile.am
+index f4f5d46..042b2ca 100644
+--- a/newlib-2010q1/newlib/libc/signal/Makefile.am
++++ b/newlib-2010q1/newlib/libc/signal/Makefile.am
+@@ -4,7 +4,7 @@ AUTOMAKE_OPTIONS = cygnus
+ 
+ INCLUDES = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
+ 
+-LIB_SOURCES = raise.c signal.c
++LIB_SOURCES = signal.c
+ 
+ libsignal_la_LDFLAGS = -Xcompiler -nostdlib
+ 
+@@ -21,7 +21,7 @@ endif # USE_LIBTOOL
+ 
+ include $(srcdir)/../../Makefile.shared
+ 
+-CHEWOUT_FILES = raise.def signal.def
++CHEWOUT_FILES = signal.def
+ 
+ SUFFIXES = .def
+ 
+diff --git a/newlib-2010q1/newlib/libc/signal/Makefile.in b/newlib-2010q1/newlib/libc/signal/Makefile.in
+index 8ffea2a..0ff04a9 100644
+--- a/newlib-2010q1/newlib/libc/signal/Makefile.in
++++ b/newlib-2010q1/newlib/libc/signal/Makefile.in
+@@ -57,12 +57,12 @@ LIBRARIES = $(noinst_LIBRARIES)
+ ARFLAGS = cru
+ lib_a_AR = $(AR) $(ARFLAGS)
+ lib_a_LIBADD =
+-am__objects_1 = lib_a-raise.$(OBJEXT) lib_a-signal.$(OBJEXT)
++am__objects_1 = lib_a-signal.$(OBJEXT)
+ @USE_LIBTOOL_FALSE@am_lib_a_OBJECTS = $(am__objects_1)
+ lib_a_OBJECTS = $(am_lib_a_OBJECTS)
+ LTLIBRARIES = $(noinst_LTLIBRARIES)
+ libsignal_la_LIBADD =
+-am__objects_2 = raise.lo signal.lo
++am__objects_2 = signal.lo
+ @USE_LIBTOOL_TRUE@am_libsignal_la_OBJECTS = $(am__objects_2)
+ libsignal_la_OBJECTS = $(am_libsignal_la_OBJECTS)
+ @USE_LIBTOOL_TRUE@am_libsignal_la_rpath =
+@@ -254,7 +254,7 @@ sysconfdir = @sysconfdir@
+ target_alias = @target_alias@
+ AUTOMAKE_OPTIONS = cygnus
+ INCLUDES = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
+-LIB_SOURCES = raise.c signal.c
++LIB_SOURCES = signal.c
+ libsignal_la_LDFLAGS = -Xcompiler -nostdlib
+ @USE_LIBTOOL_TRUE@noinst_LTLIBRARIES = libsignal.la
+ @USE_LIBTOOL_TRUE@libsignal_la_SOURCES = $(LIB_SOURCES)
+@@ -263,7 +263,7 @@ libsignal_la_LDFLAGS = -Xcompiler -nostdlib
+ @USE_LIBTOOL_FALSE@noinst_LIBRARIES = lib.a
+ @USE_LIBTOOL_FALSE@lib_a_SOURCES = $(LIB_SOURCES)
+ @USE_LIBTOOL_FALSE@lib_a_CFLAGS = $(AM_CFLAGS)
+-CHEWOUT_FILES = raise.def signal.def
++CHEWOUT_FILES = signal.def
+ SUFFIXES = .def
+ CHEW = ../../doc/makedoc -f $(srcdir)/../../doc/doc.str
+ TARGETDOC = ../tmp.texi
+@@ -335,12 +335,6 @@ distclean-compile:
+ .c.lo:
+ 	$(LTCOMPILE) -c -o $@ $<
+ 
+-lib_a-raise.o: raise.c
+-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-raise.o `test -f 'raise.c' || echo '$(srcdir)/'`raise.c
+-
+-lib_a-raise.obj: raise.c
+-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-raise.obj `if test -f 'raise.c'; then $(CYGPATH_W) 'raise.c'; else $(CYGPATH_W) '$(srcdir)/raise.c'; fi`
+-
+ lib_a-signal.o: signal.c
+ 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-signal.o `test -f 'signal.c' || echo '$(srcdir)/'`signal.c
+ 

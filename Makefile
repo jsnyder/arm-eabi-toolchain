@@ -106,7 +106,7 @@ cross-g++: cross-binutils cross-gcc cross-newlib gcc-4.4-$(CS_BASE) gcc44patch m
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) install
 
-NEWLIB_FLAGS="-ffunction-sections -fdata-sections -Os -fno-unroll-loops -fomit-frame-pointer -D__BUFSIZ__=128 -DREENTRANT_SYSCALLS_PROVIDED=1"
+NEWLIB_FLAGS="-ffunction-sections -fdata-sections -Os -fno-unroll-loops -fomit-frame-pointer -D__BUFSIZ__=128 -DSMALL_MEMORY -DREENTRANT_SYSCALLS_PROVIDED -DSIGNAL_PROVIDED -DHAVE_NANOSLEEP -DHAVE_FCNTL -DHAVE_RENAME -D_NO_GETLOGIN -D_NO_GETPWENT -D_NO_GETUT -D_NO_GETPASS -D_NO_SIGSET"
 cross-newlib: cross-binutils cross-gcc newlib-$(CS_BASE) newlibpatch
 	mkdir -p build/newlib && cd build/newlib && \
 	pushd ../../newlib-* ; \

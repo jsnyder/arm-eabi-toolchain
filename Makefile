@@ -101,14 +101,14 @@ cross-gcc: cross-binutils gcc-4.4-$(CS_BASE) gcc44patch multilibbash
 	../../gcc-*/configure --prefix=$(PREFIX) --target=$(TARGET) --enable-languages="c" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls --disable-libssp --with-newlib --without-headers --disable-shared --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch --disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
-	$(MAKE) -C gcc install-common install-cpp install- install-driver
+	$(MAKE) -C gcc install-common install-cpp install- install-driver install-headers
 
 cross-g++: cross-binutils cross-gcc cross-newlib gcc-4.4-$(CS_BASE) gcc44patch multilibbash
 	mkdir -p build/g++ && cd build/g++ && \
 	../../gcc-*/configure --prefix=$(PREFIX) --target=$(TARGET) --enable-languages="c++" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls --disable-libssp --with-newlib --without-headers --disable-shared --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch --disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs --enable-libstdcxx-allocator=malloc --enable-cxx-flags="-ffunction-sections -fdata-sections -fomit-frame-pointer" && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
-	$(MAKE) -C gcc install-common install-cpp install- install-driver
+	$(MAKE) -C gcc install-common install-cpp install- install-driver install-headers
 
 NEWLIB_FLAGS="-ffunction-sections -fdata-sections -Os -fno-unroll-loops -fomit-frame-pointer -D__BUFSIZ__=128 -DSMALL_MEMORY -DREENTRANT_SYSCALLS_PROVIDED -DSIGNAL_PROVIDED -DHAVE_NANOSLEEP -DHAVE_FCNTL -DHAVE_RENAME -D_NO_GETLOGIN -D_NO_GETPWENT -D_NO_GETUT -D_NO_GETPASS -D_NO_SIGSET"
 cross-newlib: cross-binutils cross-gcc newlib-$(CS_BASE) newlibpatch

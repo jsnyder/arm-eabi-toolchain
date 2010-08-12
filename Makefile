@@ -32,27 +32,29 @@ download: $(LOCAL_SOURCE)
 	test $$t1 = $(MD5_CHECKSUM) || \
 	echo "Bad Checksum! Please remove the following file and retry:\n$(LOCAL_SOURCE)")
 
-$(LOCAL_BASE)/%-$(CS_VERSION).tar.bz2 : download
+untar: download
 ifeq ($(USER),root)
-	@(tgt=`tar -jtf $(LOCAL_SOURCE) | grep  $*` && \
-	sudo -u $(SUDO_USER) tar -jxvf $(LOCAL_SOURCE) $$tgt)
+	test -d $(LOCAL_BASE) || sudo -u $(SUDO_USER) tar -xvzf $(LOCAL_SOURCE)
+	test -f $(LOCAL_BASE)/gcc-4.4-$(CS_VERSION).tar.bz2 || \
+	sudo -u $(SUDO_USER) mv $(LOCAL_BASE)/gcc-$(CS_VERSION).tar.bz2 $(LOCAL_BASE)/gcc-4.4-$(CS_VERSION).tar.bz2
 else
-	@(tgt=`tar -jtf $(LOCAL_SOURCE) | grep  $*` && \
-	tar -jxvf $(LOCAL_SOURCE) $$tgt)
+	test -d $(LOCAL_BASE) || tar -xvzf $(LOCAL_SOURCE)
+	test -f $(LOCAL_BASE)/gcc-4.4-$(CS_VERSION).tar.bz2 || \
+	mv $(LOCAL_BASE)/gcc-$(CS_VERSION).tar.bz2 $(LOCAL_BASE)/gcc-4.4-$(CS_VERSION).tar.bz2
 endif
 
-%-4.4-$(CS_BASE) : $(LOCAL_BASE)/%-$(CS_VERSION).tar.bz2
+%-$(CS_BASE) : untar
 ifeq ($(USER),root)
-	sudo -u $(SUDO_USER) tar -jxf $<
+	test -d $@ || sudo -u $(SUDO_USER) tar -jxf $(LOCAL_BASE)/$@-$(CS_REV).tar.bz2
 else
-	tar -jxf $<
+	test -d $@ || tar -jxf $(LOCAL_BASE)/$@-$(CS_REV).tar.bz2
 endif
 
-%-$(CS_BASE) : $(LOCAL_BASE)/%-$(CS_VERSION).tar.bz2
+%-4.4-$(CS_BASE) : untar
 ifeq ($(USER),root)
-	sudo -u $(SUDO_USER) tar -jxf $<
+	sudo -u $(SUDO_USER) tar -jxf $(LOCAL_BASE)/$@-$(CS_REV).tar.bz2
 else
-	tar -jxf $<
+	tar -jxf $(LOCAL_BASE)/$@-$(CS_REV).tar.bz2
 endif
 
 gcc44patch: gcc-4.4-$(CS_BASE)

@@ -9,12 +9,9 @@ Requirements (OS X)
 -------------------
 
 You will need to have GCC, make, binutils and latex installed on your machine
-to compile all of this. You can get all of these on Mac OS X, except LaTeX, by
+to compile all of this. You can get all of these on Mac OS X, by
 just installing the Apple Developer Tools which are free
-[here](http://developer.apple.com/Tools/). LaTeX can be acquired from here:
-[http://tug.org/mactex/](http://tug.org/mactex/) (It should be possible to do
-this build without using LaTeX, which is just used for documentation, if I
-find a solution, I’ll update the Makefile)
+[here](http://developer.apple.com/Tools/). 
 
 If you haven’t installed gmp or mpfr, install them first:
 
@@ -30,7 +27,7 @@ Requirements (Ubuntu)
 
 These instructions should now also work on Ubuntu Linux, provided the following packages have been installed prior to attempting the build:
 
-> sudo apt-get install curl flex bison libgmp3-dev libmpfr-dev autoconf texinfo build-essential texlive libncurses5-dev
+> sudo apt-get install curl flex bison libgmp3-dev libmpfr-dev autoconf build-essential libncurses5-dev
 
 
 Main Build Instructions

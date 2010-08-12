@@ -96,14 +96,14 @@ cross-gcc: cross-binutils gcc-4.4-$(CS_BASE) gcc44patch multilibbash
 	../../gcc-*/configure --prefix=$(PREFIX) --target=$(TARGET) --enable-languages="c" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls --disable-libssp --with-newlib --without-headers --disable-shared --disable-threads --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch --disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
-	$(MAKE) -C gcc install-common install-cpp install- install-driver
+	$(MAKE) -C gcc install-common install-cpp install- install-driver install-headers
 
 cross-g++: cross-binutils cross-gcc cross-newlib gcc-4.4-$(CS_BASE) gcc44patch multilibbash
 	mkdir -p build/g++ && cd build/g++ && \
 	../../gcc-*/configure --prefix=$(PREFIX) --target=$(TARGET) --enable-languages="c++" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls --disable-libssp --with-newlib --without-headers --disable-shared --disable-threads --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch --disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
-	$(MAKE) -C gcc install-common install-cpp install- install-driver
+	$(MAKE) -C gcc install-common install-cpp install- install-driver install-headers
 
 NEWLIB_FLAGS="-ffunction-sections -fdata-sections -DPREFER_SIZE_OVER_SPEED -D__OPTIMIZE_SIZE__ -Os -fomit-frame-pointer -fno-unroll-loops -D__BUFSIZ__=256 -mabi=aapcs"
 cross-newlib: cross-binutils cross-gcc newlib-$(CS_BASE)

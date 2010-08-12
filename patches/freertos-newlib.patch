@@ -142,3 +142,77 @@ index 8ffea2a..0ff04a9 100644
  lib_a-signal.o: signal.c
  	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-signal.o `test -f 'signal.c' || echo '$(srcdir)/'`signal.c
  
+diff --git a/newlib-2010q1/newlib/libc/include/sys/reent.h b/newlib-2010q1/newlib/libc/include/sys/reent.h
+index 8098c1b..92679d4 100644
+--- a/newlib-2010q1/newlib/libc/include/sys/reent.h
++++ b/newlib-2010q1/newlib/libc/include/sys/reent.h
+@@ -839,8 +839,6 @@ void _reclaim_reent _PARAMS ((struct _reent *));
+ 
+ /* #define _REENT_ONLY define this to get only reentrant routines */
+ 
+-#ifndef _REENT_ONLY
+-
+ #if defined(__DYNAMIC_REENT__) && !defined(__SINGLE_THREAD__)
+ #ifndef __getreent
+   struct _reent * _EXFUN(__getreent, (void));
+@@ -850,8 +848,6 @@ void _reclaim_reent _PARAMS ((struct _reent *));
+ # define _REENT _impure_ptr
+ #endif /* __SINGLE_THREAD__ || !__DYNAMIC_REENT__ */
+ 
+-#endif /* !_REENT_ONLY */
+-
+ #define _GLOBAL_REENT _global_impure_ptr
+ 
+ #ifdef __cplusplus
+diff --git a/newlib-2010q1/newlib/libc/include/sys/errno.h b/newlib-2010q1/newlib/libc/include/sys/errno.h
+index 166a23a..a71c621 100644
+--- a/newlib-2010q1/newlib/libc/include/sys/errno.h
++++ b/newlib-2010q1/newlib/libc/include/sys/errno.h
+@@ -19,10 +19,8 @@ extern "C" {
+ extern volatile int *__aeabi_errno_addr _PARAMS ((void));
+ # define errno (*__aeabi_errno_addr())
+ #else
+-# ifndef _REENT_ONLY
+ # define errno (*__errno())
+ extern int *__errno _PARAMS ((void));
+-# endif
+ #endif
+ 
+ /* Please don't use these variables directly.
+diff --git a/newlib-2010q1/newlib/libc/locale/locale.c b/newlib-2010q1/newlib/libc/locale/locale.c
+index d48a53a..737e089 100644
+--- a/newlib-2010q1/newlib/libc/locale/locale.c
++++ b/newlib-2010q1/newlib/libc/locale/locale.c
+@@ -281,8 +281,6 @@ _DEFUN(_localeconv_r, (data),
+   return (struct lconv *) &lconv;
+ }
+ 
+-#ifndef _REENT_ONLY
+-
+ char *
+ _DEFUN(setlocale, (category, locale),
+        int category _AND
+@@ -298,4 +296,3 @@ _DEFUN_VOID(localeconv)
+   return _localeconv_r (_REENT);
+ }
+ 
+-#endif
+diff --git a/newlib-2010q1/newlib/libc/include/locale.h b/newlib-2010q1/newlib/libc/include/locale.h
+index 57a441c..acb502d 100644
+--- a/newlib-2010q1/newlib/libc/include/locale.h
++++ b/newlib-2010q1/newlib/libc/include/locale.h
+@@ -97,14 +97,12 @@ struct lconv
+ };
+ #endif /* _AEABI_PORTABLE */
+ 
+-#ifndef _REENT_ONLY
+ char *_EXFUN(setlocale,(int category, const char *locale));
+ # ifdef _AEABI_PORTABLE
+ struct __aeabi_lconv *_EXFUN(__aeabi_localeconv,(void));
+ # else
+ struct lconv *_EXFUN(localeconv,(void));
+ # endif
+-#endif
+ 
+ struct _reent;
+ char *_EXFUN(_setlocale_r,(struct _reent *, int category, const char *locale));

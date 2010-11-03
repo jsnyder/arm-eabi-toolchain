@@ -1,3 +1,13 @@
+**IMPORTANT NOTE**
+
+This contains additions specfic to my FreeRTOS port (github.com/hugovincent/mbed-freertos)
+and shouldn't be used for normal, non-FreeRTOS builds.
+
+-- Hugo Vincent
+
+* * *
+
+
 ARM EABI Toolchain Builder
 ==========================
 

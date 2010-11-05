@@ -96,19 +96,20 @@ cross-binutils: binutils-$(CS_BASE)
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-host install-target
 
+CFLAGS_FOR_TARGET="-ffunction-sections -fdata-sections -fomit-frame-pointer -fshort-wchar -g -Os"
 cross-gcc: cross-binutils gcc-4.4-$(CS_BASE) gcc44patch multilibbash registernamespatch
 	mkdir -p build/gcc && cd build/gcc && \
 	pushd ../../gcc-* ; \
 	make clean ; \
 	popd ; \
-	../../gcc-*/configure --prefix=$(PREFIX) --target=$(TARGET) --enable-languages="c" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls --disable-libssp --with-newlib --without-headers --disable-shared --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch --disable-libffi --enable-extra-sgxxlite-multilibs && \
+	../../gcc-*/configure --prefix=$(PREFIX) --target=$(TARGET) --enable-languages="c" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls --disable-libssp --with-newlib --without-headers --disable-shared --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch --disable-libffi --enable-extra-sgxxlite-multilibs --enable-libstdcxx-allocator=malloc --enable-cxx-flags=$(CFLAGS_FOR_TARGET) CFLAGS_FOR_TARGET=$(CFLAGS_FOR_TARGET) && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
 	$(MAKE) -C gcc install-common install-cpp install- install-driver install-headers install-man
 
 cross-g++: cross-binutils cross-gcc cross-newlib gcc-4.4-$(CS_BASE) gcc44patch multilibbash registernamespatch
 	mkdir -p build/g++ && cd build/g++ && \
-	../../gcc-*/configure --prefix=$(PREFIX) --target=$(TARGET) --enable-languages="c++" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls --disable-libssp --with-newlib --without-headers --disable-shared --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch --disable-libffi --enable-extra-sgxxlite-multilibs --enable-libstdcxx-allocator=malloc --enable-cxx-flags="-ffunction-sections -fdata-sections -fomit-frame-pointer -fshort-wchar -g -Os" && \
+	../../gcc-*/configure --prefix=$(PREFIX) --target=$(TARGET) --enable-languages="c++" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls --disable-libssp --with-newlib --without-headers --disable-shared --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch --disable-libffi --enable-extra-sgxxlite-multilibs --enable-libstdcxx-allocator=malloc --enable-cxx-flags=$(CFLAGS_FOR_TARGET) CFLAGS_FOR_TARGET=$(CFLAGS_FOR_TARGET) && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
 	$(MAKE) -C gcc install-common install-cpp install- install-driver install-headers install-man

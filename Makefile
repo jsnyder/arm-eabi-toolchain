@@ -60,8 +60,9 @@ gcc44patch: gcc-$(GCC_VERSION)-$(CS_BASE)
 	patch -N -p0 < patches/gcc-44.patch
 
 multilibbash: gcc-$(GCC_VERSION)-$(CS_BASE)
-	cd gcc-$(GCC_VERSION)-$(CS_BASE) \
-	patch -N -p0 < ../patches/gcc-multilib-bash.patch
+	pushd gcc-$(GCC_VERSION)-$(CS_BASE) ; \
+	patch -N -p0 < ../patches/gcc-multilib-bash.patch ; \
+	popd ;
 
 gmp: gmp-$(CS_BASE) sudomode
 	sudo -u $(SUDO_USER) mkdir -p build/gmp && cd build/gmp ; \

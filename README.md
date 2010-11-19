@@ -15,6 +15,11 @@ This build system has been tested on Mac OS X 10.6 (should also work on 10.5).
 Small modifications may be needed in order to make it work with other
 platforms.
 
+Note: If you have previously built a toolchain of another version, out of the same builder directory, make sure to do the following first before building with newer sources:
+
+> make clean
+
+
 Requirements (OS X)
 -------------------
 
@@ -37,7 +42,7 @@ Requirements (Ubuntu)
 
 These instructions should now also work on Ubuntu Linux, provided the following packages have been installed prior to attempting the build:
 
-> sudo apt-get install curl flex bison libgmp3-dev libmpfr-dev autoconf build-essential libncurses5-dev
+> sudo apt-get install curl flex bison libgmp3-dev libmpfr-dev autoconf build-essential libncurses5-dev libmpc-dev
 
 
 Main Build Instructions

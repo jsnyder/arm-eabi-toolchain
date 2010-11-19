@@ -1,3 +1,4 @@
+SHELL = /bin/bash
 TARGET=arm-none-eabi
 PREFIX=$(HOME)/arm-cs-tools/
 PROCS=16

@@ -1,6 +1,6 @@
 TARGET=arm-none-eabi
 PREFIX=$(HOME)/arm-cs-tools/
-PROCS=3
+PROCS=16
 CS_BASE = 2010.09
 CS_REV = 51
 GCC_VER = 4.5
@@ -68,7 +68,7 @@ gmp: gmp-$(CS_BASE) sudomode
 	pushd ../../gmp-$(CS_BASE) ; \
 	make clean ; \
 	popd ; \
-	sudo -u $(SUDO_USER) ../../gmp-*/configure --disable-shared && \
+	sudo -u $(SUDO_USER) ../../gmp-$(CS_BASE)/configure --disable-shared && \
 	sudo -u $(SUDO_USER) $(MAKE) -j$(PROCS) all && \
 	$(MAKE) install
 
@@ -77,7 +77,7 @@ mpfr: gmp mpfr-$(CS_BASE) sudomode
 	pushd ../../mpfr-$(CS_BASE) ; \
 	make clean ; \
 	popd ; \
-	sudo -u $(SUDO_USER) ../../mpfr-*/configure LDFLAGS="-Wl,-search_paths_first" --disable-shared && \
+	sudo -u $(SUDO_USER) ../../mpfr-$(CS_BASE)/configure LDFLAGS="-Wl,-search_paths_first" --disable-shared && \
 	sudo -u $(SUDO_USER) $(MAKE) -j$(PROCS) all && \
 	$(MAKE) install
 
@@ -86,7 +86,7 @@ cross-binutils: binutils-$(CS_BASE)
 	pushd ../../binutils-$(CS_BASE) ; \
 	make clean ; \
 	popd ; \
-	../../binutils-*/configure --prefix=$(PREFIX) --target=$(TARGET) --disable-nls --disable-werror && \
+	../../binutils-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) --disable-nls --disable-werror && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-host install-target
 
@@ -95,7 +95,7 @@ cross-gcc: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
 	pushd ../../gcc-$(GCC_VERSION)-$(CS_BASE) ; \
 	make clean ; \
 	popd ; \
-	../../gcc-*/configure --prefix=$(PREFIX) --target=$(TARGET) --enable-languages="c" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls --disable-libssp --with-newlib --without-headers --disable-shared --disable-threads --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch --disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs && \
+	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) --enable-languages="c" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls --disable-libssp --with-newlib --without-headers --disable-shared --disable-threads --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch --disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
 	$(MAKE) -C gcc install-common install-cpp install- install-driver install-headers
@@ -110,7 +110,7 @@ cross-g++: cross-binutils cross-gcc cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE)  
 NEWLIB_FLAGS="-ffunction-sections -fdata-sections -DPREFER_SIZE_OVER_SPEED -D__OPTIMIZE_SIZE__ -Os -fomit-frame-pointer -fno-unroll-loops -D__BUFSIZ__=256 -mabi=aapcs"
 cross-newlib: cross-binutils cross-gcc newlib-$(CS_BASE)
 	mkdir -p build/newlib && cd build/newlib && \
-	pushd ../../newlib-* ; \
+	pushd ../../newlib-$(CS_BASE) ; \
 	make clean ; \
 	popd ; \
 	../../newlib-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) --disable-newlib-supplied-syscalls --disable-libgloss --disable-nls --disable-shared --enable-newlib-io-long-long && \
@@ -119,7 +119,7 @@ cross-newlib: cross-binutils cross-gcc newlib-$(CS_BASE)
 
 cross-gdb: gdb-$(CS_BASE)
 	mkdir -p build/gdb && cd build/gdb && \
-	pushd ../../gdb-* ; \
+	pushd ../../gdb-$(CS_BASE) ; \
 	make clean ; \
 	popd ; \
 	../../gdb-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) --disable-werror && \

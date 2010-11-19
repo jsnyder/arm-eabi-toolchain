@@ -4,6 +4,7 @@ PROCS=16
 CS_BASE = 2010.09
 CS_REV = 51
 GCC_VERSION = 4.5
+MPC_VERSION = 0.8.1
 CS_VERSION = $(CS_BASE)-$(CS_REV)
 LOCAL_BASE = arm-$(CS_VERSION)-arm-none-eabi
 LOCAL_SOURCE = $(LOCAL_BASE).src.tar.bz2
@@ -12,7 +13,7 @@ MD5_CHECKSUM = 0ab992015a71443efbf3654f33ffc675
 
 
 install-cross: cross-binutils cross-gcc cross-g++ cross-newlib cross-gdb
-install-deps: gmp mpfr
+install-deps: gmp mpfr mpc
 
 sudomode:
 ifneq ($(USER),root)
@@ -42,12 +43,20 @@ else
 	tar -jxvf $(LOCAL_SOURCE) $$tgt)
 endif
 
-%-$(GCC_VERSION)-$(CS_BASE) : $(LOCAL_BASE)/%-$(CS_VERSION).tar.bz2
+gcc-$(GCC_VERSION)-$(CS_BASE) : $(LOCAL_BASE)/gcc-$(CS_VERSION).tar.bz2
 ifeq ($(USER),root)
 	sudo -u $(SUDO_USER) tar -jxf $<
 else
 	tar -jxf $<
 endif
+
+mpc-$(MPC_VERSION) : $(LOCAL_BASE)/mpc-$(CS_VERSION).tar.bz2
+ifeq ($(USER),root)
+	sudo -u $(SUDO_USER) tar -jxf $<
+else
+	tar -jxf $<
+endif
+
 
 %-$(CS_BASE) : $(LOCAL_BASE)/%-$(CS_VERSION).tar.bz2
 ifeq ($(USER),root)
@@ -70,6 +79,15 @@ gmp: gmp-$(CS_BASE) sudomode
 	make clean ; \
 	popd ; \
 	sudo -u $(SUDO_USER) ../../gmp-$(CS_BASE)/configure --disable-shared && \
+	sudo -u $(SUDO_USER) $(MAKE) -j$(PROCS) all && \
+	$(MAKE) install
+
+mpc: mpc-$(MPC_VERSION) sudomode
+	sudo -u $(SUDO_USER) mkdir -p build/gmp && cd build/gmp ; \
+	pushd ../../mpc-$(MPC_VERSION) ; \
+	make clean ; \
+	popd ; \
+	sudo -u $(SUDO_USER) ../../mpc-$(MPC_VERSION)/configure --disable-shared && \
 	sudo -u $(SUDO_USER) $(MAKE) -j$(PROCS) all && \
 	$(MAKE) install
 

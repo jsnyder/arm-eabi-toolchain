@@ -61,6 +61,16 @@ These instructions should now also work on Ubuntu Linux, provided the following 
 > sudo apt-get install curl flex bison libgmp3-dev libmpfr-dev autoconf build-essential libncurses5-dev libmpc-dev
 
 
+Requirements (Fedora 12)
+------------------------
+
+These instructions should now also work on Fedora 12/13, provided the following packages have been installed prior to attempting the build:
+
+> yum install curl flex bison libgmp3-dev libmpfr-dev autoconf build-essential libncurses5-dev libmpc-dev mpfd-dev
+
+(Tested by BruceUK).
+
+
 Main Build Instructions
 -----------------------
 

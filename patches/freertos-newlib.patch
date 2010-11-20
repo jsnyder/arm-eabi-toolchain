@@ -17,6 +17,27 @@ index 73bca08..11cc1a6 100644
  
  struct _reent;
  char *_EXFUN(_setlocale_r,(struct _reent *, int category, const char *locale));
+diff --git a/newlib/libc/include/reent.h b/newlib/libc/include/reent.h
+index 4617c0d..3758a8a 100644
+--- a/newlib/libc/include/reent.h
++++ b/newlib/libc/include/reent.h
+@@ -92,6 +92,7 @@ extern "C" {
+ 
+ #include <sys/reent.h>
+ #include <sys/_types.h>
++#include <sys/types.h>
+ #include <machine/types.h>
+ 
+ #define __need_size_t
+@@ -147,7 +148,7 @@ extern int _isatty_r _PARAMS ((struct _reent *, int));
+ extern int _kill_r _PARAMS ((struct _reent *, int, int));
+ extern int _link_r _PARAMS ((struct _reent *, const char *, const char *));
+ extern _off_t _lseek_r _PARAMS ((struct _reent *, int, _off_t, int));
+-extern int _mkdir_r _PARAMS ((struct _reent *, const char *, int));
++extern int _mkdir_r _PARAMS ((struct _reent *, const char *, mode_t));
+ extern int _open_r _PARAMS ((struct _reent *, const char *, int, int));
+ extern _ssize_t _read_r _PARAMS ((struct _reent *, int, void *, size_t));
+ extern int _rename_r _PARAMS ((struct _reent *, const char *, const char *));
 diff --git a/newlib/libc/include/sys/config.h b/newlib/libc/include/sys/config.h
 index 3245e54..81cbfc0 100644
 --- a/newlib/libc/include/sys/config.h

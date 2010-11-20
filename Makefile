@@ -12,7 +12,6 @@ LOCAL_SOURCE = $(LOCAL_BASE).src.tar.bz2
 SOURCE_URL = http://www.codesourcery.com/sgpp/lite/arm/portal/package7812/public/arm-none-eabi/$(LOCAL_SOURCE)
 MD5_CHECKSUM = 0ab992015a71443efbf3654f33ffc675
 
-
 install-cross: cross-binutils cross-gcc cross-g++ cross-newlib cross-gdb
 install-deps: gmp mpfr mpc
 
@@ -71,6 +70,11 @@ multilibbash: gcc-$(GCC_VERSION)-$(CS_BASE)/
 	patch -N -p0 < ../patches/gcc-multilib-bash.patch ; \
 	popd ;
 
+gcc-optsize-patch: gcc-$(GCC_VERSION)-$(CS_BASE)/
+	pushd gcc-$(GCC_VERSION)-$(CS_BASE) ; \
+	patch -N -p1 < ../patches/gcc-optsize.patch ; \
+	popd ;
+
 newlibpatch: newlib-$(CS_BASE)/
 	pushd newlib-$(CS_BASE) ; \
 	patch -N -p1 < ../patches/freertos-newlib.patch ; \
@@ -113,15 +117,16 @@ cross-binutils: binutils-$(CS_BASE)/
 	$(MAKE) installdirs install-host install-target
 
 CFLAGS_FOR_TARGET="-ffunction-sections -fdata-sections -fomit-frame-pointer \
-				  -fshort-wchar"
-cross-gcc: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE)/ multilibbash
+				  -DPREFER_SIZE_OVER_SPEED -D__OPTIMIZE_SIZE__ -g -Os \
+				  -fshort-wchar -fno-unroll-loops -mabi=aapcs"
+cross-gcc: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE)/ multilibbash gcc-optsize-patch
 	mkdir -p build/gcc && cd build/gcc && \
 	pushd ../../gcc-$(GCC_VERSION)-$(CS_BASE) ; \
 	make clean ; \
 	popd ; \
 	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) \
 	--enable-languages="c" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls \
-	--disable-libssp --with-newlib --without-headers --disable-shared \
+	--disable-libssp --with-newlib --without-headers --disable-shared --enable-target-optspace \
 	--disable-threads --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch \
 	--disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs \
 	--enable-libstdcxx-allocator=malloc --enable-cxx-flags=$(CFLAGS_FOR_TARGET) \
@@ -130,7 +135,7 @@ cross-gcc: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE)/ multilibbash
 	$(MAKE) installdirs install-target && \
 	$(MAKE) -C gcc install-common install-cpp install- install-driver install-headers install-man
 
-cross-g++: cross-binutils cross-gcc cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE)/ multilibbash
+cross-g++: cross-binutils cross-gcc cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE)/ multilibbash gcc-optsize-patch
 	mkdir -p build/g++ && cd build/g++ && \
 	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) \
 	--enable-languages="c++" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls \
@@ -149,8 +154,7 @@ NEWLIB_FLAGS="-ffunction-sections -fdata-sections -DPREFER_SIZE_OVER_SPEED \
 			 -DREENTRANT_SYSCALLS_PROVIDED -D_REENT_ONLY -DSIGNAL_PROVIDED \
 			 -DHAVE_NANOSLEEP -DHAVE_FCNTL -DHAVE_RENAME -D_NO_GETLOGIN \
 			 -D_NO_GETPWENT -D_NO_GETUT -D_NO_GETPASS -D_NO_SIGSET"
-cross-newlib: newlib-$(CS_BASE)/ newlibpatch
-	#cross-binutils cross-gcc 
+cross-newlib: cross-binutils cross-gcc newlib-$(CS_BASE)/ newlibpatch
 	mkdir -p build/newlib && cd build/newlib && \
 	pushd ../../newlib-$(CS_BASE) ; \
 	make clean ; \

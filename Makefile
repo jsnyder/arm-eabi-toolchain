@@ -66,23 +66,17 @@ else
 	tar -jxf $<
 endif
 
-multilibbash: gcc-$(GCC_VERSION)-$(CS_BASE)
+multilibbash: gcc-$(GCC_VERSION)-$(CS_BASE)/
 	pushd gcc-$(GCC_VERSION)-$(CS_BASE) ; \
 	patch -N -p0 < ../patches/gcc-multilib-bash.patch ; \
 	popd ;
 
-#newlibpatch: newlib-$(CS_BASE)
-#	pushd newlib-$(CS_BASE) ; \
-#	patch -N -p0 < ../patches/freertos-newlib.patch ; \
-#	popd ;
+newlibpatch: newlib-$(CS_BASE)/
+	pushd newlib-$(CS_BASE) ; \
+	patch -N -p1 < ../patches/freertos-newlib.patch ; \
+	popd ;
 
-#CFLAGS_FOR_TARGET="-ffunction-sections -fdata-sections -fomit-frame-pointer -fshort-wchar -g -Os"
-#gcc/configure --prefix=$(PREFIX) --target=$(TARGET) --enable-languages="c" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls --disable-libssp --with-newlib --without-headers --disable-shared --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch --disable-libffi --enable-extra-sgxxlite-multilibs --enable-libstdcxx-allocator=malloc --enable-cxx-flags=$(CFLAGS_FOR_TARGET) CFLAGS_FOR_TARGET=$(CFLAGS_FOR_TARGET)
-
-#NEWLIB_FLAGS="-ffunction-sections -fdata-sections -fshort-wchar -g -Os -fno-unroll-loops -fomit-frame-pointer -D__BUFSIZ__=128 -DSMALL_MEMORY -DREENTRANT_SYSCALLS_PROVIDED -D_REENT_ONLY -DSIGNAL_PROVIDED -DHAVE_NANOSLEEP -DHAVE_FCNTL -DHAVE_RENAME -D_NO_GETLOGIN -D_NO_GETPWENT -D_NO_GETUT -D_NO_GETPASS -D_NO_SIGSET"
-#newlib/configure --prefix=$(PREFIX) --target=$(TARGET) --disable-newlib-supplied-syscalls --disable-libgloss --disable-nls --disable-shared --enable-newlib-io-long-long --enable-target-optspace --enable-newlib-multithread --enable-newlib-reent-small --disable-newlib-atexit-alloc
-
-gmp: gmp-$(CS_BASE) sudomode
+gmp: gmp-$(CS_BASE)/ sudomode
 	sudo -u $(SUDO_USER) mkdir -p build/gmp && cd build/gmp ; \
 	pushd ../../gmp-$(CS_BASE) ; \
 	make clean ; \
@@ -91,7 +85,7 @@ gmp: gmp-$(CS_BASE) sudomode
 	sudo -u $(SUDO_USER) $(MAKE) -j$(PROCS) all && \
 	$(MAKE) install
 
-mpc: mpc-$(MPC_VERSION) sudomode
+mpc: mpc-$(MPC_VERSION)/ sudomode
 	sudo -u $(SUDO_USER) mkdir -p build/gmp && cd build/gmp ; \
 	pushd ../../mpc-$(MPC_VERSION) ; \
 	make clean ; \
@@ -100,7 +94,7 @@ mpc: mpc-$(MPC_VERSION) sudomode
 	sudo -u $(SUDO_USER) $(MAKE) -j$(PROCS) all && \
 	$(MAKE) install
 
-mpfr: gmp mpfr-$(CS_BASE) sudomode
+mpfr: gmp mpfr-$(CS_BASE)/ sudomode
 	sudo -u $(SUDO_USER) mkdir -p build/mpfr && cd build/mpfr && \
 	pushd ../../mpfr-$(CS_BASE) ; \
 	make clean ; \
@@ -109,7 +103,7 @@ mpfr: gmp mpfr-$(CS_BASE) sudomode
 	sudo -u $(SUDO_USER) $(MAKE) -j$(PROCS) all && \
 	$(MAKE) install
 
-cross-binutils: binutils-$(CS_BASE)
+cross-binutils: binutils-$(CS_BASE)/
 	mkdir -p build/binutils && cd build/binutils && \
 	pushd ../../binutils-$(CS_BASE) ; \
 	make clean ; \
@@ -118,34 +112,58 @@ cross-binutils: binutils-$(CS_BASE)
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-host install-target
 
-cross-gcc: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
+CFLAGS_FOR_TARGET="-ffunction-sections -fdata-sections -fomit-frame-pointer \
+				  -fshort-wchar"
+cross-gcc: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE)/ multilibbash
 	mkdir -p build/gcc && cd build/gcc && \
 	pushd ../../gcc-$(GCC_VERSION)-$(CS_BASE) ; \
 	make clean ; \
 	popd ; \
-	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) --enable-languages="c" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls --disable-libssp --with-newlib --without-headers --disable-shared --disable-threads --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch --disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs && \
+	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) \
+	--enable-languages="c" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls \
+	--disable-libssp --with-newlib --without-headers --disable-shared \
+	--disable-threads --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch \
+	--disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs \
+	--enable-libstdcxx-allocator=malloc --enable-cxx-flags=$(CFLAGS_FOR_TARGET) \
+	CFLAGS_FOR_TARGET=$(CFLAGS_FOR_TARGET) && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
 	$(MAKE) -C gcc install-common install-cpp install- install-driver install-headers install-man
 
-cross-g++: cross-binutils cross-gcc cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
+cross-g++: cross-binutils cross-gcc cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE)/ multilibbash
 	mkdir -p build/g++ && cd build/g++ && \
-	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) --enable-languages="c++" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls --disable-libssp --with-newlib --without-headers --disable-shared --disable-threads --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch --disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs && \
+	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) \
+	--enable-languages="c++" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls \
+	--disable-libssp --with-newlib --without-headers --disable-shared \
+	--disable-threads --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch \
+	--disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs \
+	--enable-libstdcxx-allocator=malloc --enable-cxx-flags=$(CFLAGS_FOR_TARGET) \
+	CFLAGS_FOR_TARGET=$(CFLAGS_FOR_TARGET) && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
 	$(MAKE) -C gcc install-common install-cpp install- install-driver install-headers install-man
 
-NEWLIB_FLAGS="-ffunction-sections -fdata-sections -DPREFER_SIZE_OVER_SPEED -D__OPTIMIZE_SIZE__ -Os -fomit-frame-pointer -fno-unroll-loops -D__BUFSIZ__=256 -mabi=aapcs"
-cross-newlib: cross-binutils cross-gcc newlib-$(CS_BASE)
+NEWLIB_FLAGS="-ffunction-sections -fdata-sections -DPREFER_SIZE_OVER_SPEED \
+			 -D__OPTIMIZE_SIZE__ -g -Os -fomit-frame-pointer -fno-unroll-loops \
+			 -D__BUFSIZ__=128 -mabi=aapcs -DSMALL_MEMORY -fshort-wchar \
+			 -DREENTRANT_SYSCALLS_PROVIDED -D_REENT_ONLY -DSIGNAL_PROVIDED \
+			 -DHAVE_NANOSLEEP -DHAVE_FCNTL -DHAVE_RENAME -D_NO_GETLOGIN \
+			 -D_NO_GETPWENT -D_NO_GETUT -D_NO_GETPASS -D_NO_SIGSET"
+cross-newlib: newlib-$(CS_BASE)/ newlibpatch
+	#cross-binutils cross-gcc 
 	mkdir -p build/newlib && cd build/newlib && \
 	pushd ../../newlib-$(CS_BASE) ; \
 	make clean ; \
 	popd ; \
-	../../newlib-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) --disable-newlib-supplied-syscalls --disable-libgloss --disable-nls --disable-shared --enable-newlib-io-long-long && \
+	../../newlib-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) \
+	--disable-newlib-supplied-syscalls --disable-libgloss --disable-nls \
+	--disable-shared --enable-newlib-io-long-long --enable-target-optspace \
+	--enable-newlib-multithread --enable-newlib-reent-small \
+	--disable-newlib-atexit-alloc && \
 	$(MAKE) -j$(PROCS) CFLAGS_FOR_TARGET=$(NEWLIB_FLAGS) CCASFLAGS=$(NEWLIB_FLAGS) && \
 	$(MAKE) install
 
-cross-gdb: gdb-$(CS_BASE)
+cross-gdb: gdb-$(CS_BASE)/
 	mkdir -p build/gdb && cd build/gdb && \
 	pushd ../../gdb-$(CS_BASE) ; \
 	make clean ; \
@@ -158,4 +176,4 @@ cross-gdb: gdb-$(CS_BASE)
 
 .PHONY : clean
 clean:
-	rm -rf build *-$(CS_BASE) binutils-* gcc-* gdb-* newlib-* $(LOCAL_BASE)
+	rm -rf build *-$(CS_BASE) binutils-* gcc-* gdb-* newlib-* mpc-* $(LOCAL_BASE)

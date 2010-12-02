@@ -129,7 +129,8 @@ cross-gcc: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE)/ multilibbash gcc-optsiz
 	--disable-libssp --with-newlib --without-headers --disable-shared --enable-target-optspace \
 	--disable-threads --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch \
 	--disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs \
-	--enable-libstdcxx-allocator=malloc --enable-cxx-flags=$(CFLAGS_FOR_TARGET) \
+	--enable-libstdcxx-allocator=malloc --enable-lto \
+	--enable-cxx-flags=$(CFLAGS_FOR_TARGET) \
 	CFLAGS_FOR_TARGET=$(CFLAGS_FOR_TARGET) && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
@@ -142,7 +143,8 @@ cross-g++: cross-binutils cross-gcc cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE)/ 
 	--disable-libssp --with-newlib --without-headers --disable-shared \
 	--disable-threads --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch \
 	--disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs \
-	--enable-libstdcxx-allocator=malloc --enable-cxx-flags=$(CFLAGS_FOR_TARGET) \
+	--enable-libstdcxx-allocator=malloc --enable-lto \
+	--enable-cxx-flags=$(CFLAGS_FOR_TARGET) \
 	CFLAGS_FOR_TARGET=$(CFLAGS_FOR_TARGET) && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \

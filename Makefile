@@ -102,7 +102,7 @@ cross-binutils: binutils-$(CS_BASE)
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-host install-target
 
-cross-gcc: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
+cross-gcc: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE)
 	mkdir -p build/gcc && cd build/gcc && \
 	pushd ../../gcc-$(GCC_VERSION)-$(CS_BASE) ; \
 	make clean ; \
@@ -112,7 +112,7 @@ cross-gcc: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
 	$(MAKE) installdirs install-target && \
 	$(MAKE) -C gcc install-common install-cpp install- install-driver install-headers
 
-cross-g++: cross-binutils cross-gcc cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE)  multilibbash
+cross-g++: cross-binutils cross-gcc cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE)
 	mkdir -p build/g++ && cd build/g++ && \
 	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) --enable-languages="c++" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls --disable-libssp --with-newlib --without-headers --disable-shared --disable-threads --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch --disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs && \
 	$(MAKE) -j$(PROCS) && \

@@ -1,7 +1,7 @@
 SHELL = /bin/bash
 TARGET=arm-none-eabi
 PREFIX=$(HOME)/arm-cs-tools/
-PROCS=16
+PROCS=4
 CS_BASE = 2010.09
 CS_REV = 51
 GCC_VERSION = 4.5

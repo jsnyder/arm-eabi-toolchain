@@ -65,19 +65,9 @@ else
 	tar -jxf $<
 endif
 
-multilibbash: gcc-$(GCC_VERSION)-$(CS_BASE)/
-	pushd gcc-$(GCC_VERSION)-$(CS_BASE) ; \
-	patch -N -p0 < ../patches/gcc-multilib-bash.patch ; \
-	popd ;
-
 gcc-optsize-patch: gcc-$(GCC_VERSION)-$(CS_BASE)/
 	pushd gcc-$(GCC_VERSION)-$(CS_BASE) ; \
 	patch -N -p1 < ../patches/gcc-optsize.patch ; \
-	popd ;
-
-newlibpatch: newlib-$(CS_BASE)/
-	pushd newlib-$(CS_BASE) ; \
-	patch -N -p1 < ../patches/freertos-newlib.patch ; \
 	popd ;
 
 gmp: gmp-$(CS_BASE)/ sudomode
@@ -118,8 +108,8 @@ cross-binutils: binutils-$(CS_BASE)/
 
 CFLAGS_FOR_TARGET="-ffunction-sections -fdata-sections -fomit-frame-pointer \
 				  -DPREFER_SIZE_OVER_SPEED -D__OPTIMIZE_SIZE__ -g -Os \
-				  -fshort-wchar -fno-unroll-loops -mabi=aapcs"
-cross-gcc: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE)/ multilibbash gcc-optsize-patch
+				  -fno-unroll-loops -mabi=aapcs"
+cross-gcc: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE)/ gcc-optsize-patch
 	mkdir -p build/gcc && cd build/gcc && \
 	pushd ../../gcc-$(GCC_VERSION)-$(CS_BASE) ; \
 	make clean ; \
@@ -136,7 +126,7 @@ cross-gcc: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE)/ multilibbash gcc-optsiz
 	$(MAKE) installdirs install-target && \
 	$(MAKE) -C gcc install-common install-cpp install- install-driver install-headers install-man
 
-cross-g++: cross-binutils cross-gcc cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE)/ multilibbash gcc-optsize-patch
+cross-g++: cross-binutils cross-gcc cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE)/ gcc-optsize-patch
 	mkdir -p build/g++ && cd build/g++ && \
 	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) \
 	--enable-languages="c++" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls \
@@ -152,11 +142,8 @@ cross-g++: cross-binutils cross-gcc cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE)/ 
 
 NEWLIB_FLAGS="-ffunction-sections -fdata-sections -DPREFER_SIZE_OVER_SPEED \
 			 -D__OPTIMIZE_SIZE__ -g -Os -fomit-frame-pointer -fno-unroll-loops \
-			 -D__BUFSIZ__=128 -mabi=aapcs -DSMALL_MEMORY -fshort-wchar \
-			 -DREENTRANT_SYSCALLS_PROVIDED -D_REENT_ONLY -DSIGNAL_PROVIDED \
-			 -DHAVE_NANOSLEEP -DHAVE_FCNTL -DHAVE_RENAME -D_NO_GETLOGIN \
-			 -D_NO_GETPWENT -D_NO_GETUT -D_NO_GETPASS -D_NO_SIGSET"
-cross-newlib: cross-binutils cross-gcc newlib-$(CS_BASE)/ newlibpatch
+			 -D__BUFSIZ__=128 -mabi=aapcs -DSMALL_MEMORY"
+cross-newlib: cross-binutils cross-gcc newlib-$(CS_BASE)/ 
 	mkdir -p build/newlib && cd build/newlib && \
 	pushd ../../newlib-$(CS_BASE) ; \
 	make clean ; \

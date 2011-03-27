@@ -1,7 +1,7 @@
 SHELL = /bin/bash
 TARGET=arm-none-eabi
 PREFIX=$(HOME)/arm-cs-tools/
-PROCS=4
+PROCS=6
 CS_BASE = 2010.09
 CS_REV = 51
 GCC_VERSION = 4.5
@@ -129,7 +129,7 @@ cross-gcc: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE)/ multilibbash gcc-optsiz
 	--disable-libssp --with-newlib --without-headers --disable-shared --enable-target-optspace \
 	--disable-threads --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch \
 	--disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs \
-	--enable-libstdcxx-allocator=malloc --enable-lto \
+	--enable-libstdcxx-allocator=malloc \
 	--enable-cxx-flags=$(CFLAGS_FOR_TARGET) \
 	CFLAGS_FOR_TARGET=$(CFLAGS_FOR_TARGET) && \
 	$(MAKE) -j$(PROCS) && \
@@ -143,7 +143,7 @@ cross-g++: cross-binutils cross-gcc cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE)/ 
 	--disable-libssp --with-newlib --without-headers --disable-shared \
 	--disable-threads --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch \
 	--disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs \
-	--enable-libstdcxx-allocator=malloc --enable-lto \
+	--enable-libstdcxx-allocator=malloc \
 	--enable-cxx-flags=$(CFLAGS_FOR_TARGET) \
 	CFLAGS_FOR_TARGET=$(CFLAGS_FOR_TARGET) && \
 	$(MAKE) -j$(PROCS) && \

@@ -1,0 +1,14 @@
+diff --git a/gcc/config/arm/lib1funcs.asm b/gcc/config/arm/lib1funcs.asm
+index d848605..95dfa59 100644
+--- a/gcc/config/arm/lib1funcs.asm
++++ b/gcc/config/arm/lib1funcs.asm
+@@ -1,6 +1,9 @@
+ @ libgcc routines for ARM cpu.
+ @ Division routines, written by Richard Earnshaw, (rearnsha@armltd.co.uk)
+ 
++/* See gcc bugs 43999 and 45817 */
++#undef __OPTIMIZE_SIZE__
++
+ /* Copyright 1995, 1996, 1998, 1999, 2000, 2003, 2004, 2005, 2007, 2008,
+    2009, 2010 Free Software Foundation, Inc.
+ 

@@ -2,6 +2,8 @@ SHELL = /bin/bash
 TARGET=arm-none-eabi
 PREFIX=$(HOME)/arm-cs-tools/
 PROCS=6
+PACKAGE_VERSION=""
+BUG_URL="https://github.com/jsnyder/arm-eabi-toolchain/issues"
 CS_BASE = 2010.09
 CS_REV = 51
 GCC_VERSION = 4.5
@@ -102,7 +104,8 @@ cross-binutils: binutils-$(CS_BASE)/
 	pushd ../../binutils-$(CS_BASE) ; \
 	make clean ; \
 	popd ; \
-	../../binutils-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) --disable-nls --disable-werror && \
+	../../binutils-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) --disable-nls --disable-werror \
+	--with-sysroot=$(PREFIX)/$(TARGET) --with-bugurl=$(BUG_URL) && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-host install-target
 
@@ -119,8 +122,8 @@ cross-gcc: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE)/ gcc-optsize-patch
 	--disable-libssp --with-newlib --without-headers --disable-shared --enable-target-optspace \
 	--disable-threads --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch \
 	--disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs \
-	--enable-libstdcxx-allocator=malloc \
-	--enable-cxx-flags=$(CFLAGS_FOR_TARGET) \
+	--enable-libstdcxx-allocator=malloc --with-bugurl=$(BUG_URL) \
+	--enable-cxx-flags=$(CFLAGS_FOR_TARGET) --with-sysroot=$(PREFIX)/$(TARGET) \
 	CFLAGS_FOR_TARGET=$(CFLAGS_FOR_TARGET) && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
@@ -133,8 +136,8 @@ cross-g++: cross-binutils cross-gcc cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE)/ 
 	--disable-libssp --with-newlib --without-headers --disable-shared \
 	--disable-threads --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch \
 	--disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs \
-	--enable-libstdcxx-allocator=malloc \
-	--enable-cxx-flags=$(CFLAGS_FOR_TARGET) \
+	--enable-libstdcxx-allocator=malloc --with-bugurl=$(BUG_URL) \
+	--enable-cxx-flags=$(CFLAGS_FOR_TARGET) --with-sysroot=$(PREFIX)/$(TARGET) \
 	CFLAGS_FOR_TARGET=$(CFLAGS_FOR_TARGET) && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \

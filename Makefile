@@ -9,9 +9,12 @@ MPC_VERSION = 0.8.1
 CS_VERSION = $(CS_BASE)-$(CS_REV)
 LOCAL_BASE = arm-$(CS_VERSION)-arm-none-eabi
 LOCAL_SOURCE = $(LOCAL_BASE).src.tar.bz2
+LOCAL_BIN = $(LOCAL_BASE)-i686-pc-linux-gnu.tar.bz2
 SOURCE_URL = http://www.codesourcery.com/sgpp/lite/arm/portal/package7812/public/arm-none-eabi/$(LOCAL_SOURCE)
-MD5_CHECKSUM = 0ab992015a71443efbf3654f33ffc675
+BIN_URL = http://www.codesourcery.com/sgpp/lite/arm/portal/package7813/public/arm-none-eabi/$(LOCAL_BIN)
 
+SOURCE_MD5_CHCKSUM = 0ab992015a71443efbf3654f33ffc675
+BIN_MD5_CHECKSUM = 273e0c8da3111244957935aa4d6da197
 
 install-cross: cross-binutils cross-gcc cross-g++ cross-newlib cross-gdb
 install-deps: gmp mpfr mpc
@@ -30,18 +33,48 @@ else
 	curl -LO $(SOURCE_URL)
 endif
 
-download: $(LOCAL_SOURCE)
+$(LOCAL_BIN):
+ifeq ($(USER),root)
+	sudo -u $(SUDO_USER) curl -LO $(BIN_URL)
+else
+	curl -LO $(BIN_URL)
+endif
+
+downloadbin: $(LOCAL_BIN)
+	@(t1=`openssl md5 $(LOCAL_BIN) | cut -f 2 -d " " -` && \
+	test $$t1 = $(BIN_MD5_CHECKSUM) || \
+	echo "Bad Checksum! Please remove the following file and retry:\n$(LOCAL_BIN)")
+
+downloadsrc: $(LOCAL_SOURCE)
 	@(t1=`openssl md5 $(LOCAL_SOURCE) | cut -f 2 -d " " -` && \
-	test $$t1 = $(MD5_CHECKSUM) || \
+	test $$t1 = $(SOURCE_MD5_CHECKSUM) || \
 	echo "Bad Checksum! Please remove the following file and retry:\n$(LOCAL_SOURCE)")
 
-$(LOCAL_BASE)/%-$(CS_VERSION).tar.bz2 : download
+$(LOCAL_BASE)/%-$(CS_VERSION).tar.bz2 : downloadsrc
 ifeq ($(USER),root)
 	@(tgt=`tar -jtf $(LOCAL_SOURCE) | grep  $*` && \
 	sudo -u $(SUDO_USER) tar -jxvf $(LOCAL_SOURCE) $$tgt)
 else
 	@(tgt=`tar -jtf $(LOCAL_SOURCE) | grep  $*` && \
 	tar -jxvf $(LOCAL_SOURCE) $$tgt)
+endif
+
+arm-$(CS_BASE): downloadbin
+ifeq ($(USER),root)
+	sudo -u $(SUDO_USER) tar -jtf $(LOCAL_BIN) | grep -e '.*cs3.*[ah]$$' -e '.*\.ld' | xargs tar -jxvf $(LOCAL_BIN)
+else
+	tar -jtf $(LOCAL_BIN) | grep -e '.*cs3.*[ah]$$' -e '.*\.ld' | xargs tar -jxvf $(LOCAL_BIN)
+endif
+
+install-bin-extras: arm-$(CS_BASE)
+ifeq ($(USER),root)
+	pushd arm-$(CS_BASE) ; \
+	sudo -u $(SUDO_USER) cp -r arm-none-eabi $(PREFIX) ; \
+	popd ;
+else
+	pushd arm-$(CS_BASE) ; \
+	cp -r arm-none-eabi $(PREFIX) ; \
+	popd ;
 endif
 
 multilibbash: gcc-$(GCC_VERSION)-$(CS_BASE)

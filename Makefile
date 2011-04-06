@@ -2,10 +2,10 @@ SHELL = /bin/bash
 TARGET=arm-none-eabi
 PREFIX=$(HOME)/arm-cs-tools/
 PROCS=6
-PACKAGE_VERSION=""
 BUG_URL="https://github.com/jsnyder/arm-eabi-toolchain/issues"
 CS_BASE = 2010.09
 CS_REV = 51
+PACKAGE_VERSION="arm-eabi-toolchain $(CS_BASE)-$(CS_REV)"
 GCC_VERSION = 4.5
 MPC_VERSION = 0.8.1
 CS_VERSION = $(CS_BASE)-$(CS_REV)
@@ -119,12 +119,14 @@ cross-gcc: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE)/ gcc-optsize-patch
 	popd ; \
 	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) \
 	--enable-languages="c" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls \
-	--disable-libssp --with-newlib --without-headers --disable-shared --enable-target-optspace \
+	--disable-libssp --with-newlib --disable-shared --enable-target-optspace \
 	--disable-threads --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch \
 	--disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs \
 	--enable-libstdcxx-allocator=malloc --with-bugurl=$(BUG_URL) \
 	--enable-cxx-flags=$(CFLAGS_FOR_TARGET) --with-sysroot=$(PREFIX)/$(TARGET) \
-	CFLAGS_FOR_TARGET=$(CFLAGS_FOR_TARGET) && \
+	--with-build-sysroot=$(PREFIX)/$(TARGET) --with-build-time-tools=$(PREFIX)/$(TARGET)/bin \
+	CFLAGS_FOR_TARGET=$(CFLAGS_FOR_TARGET) LDFLAGS_FOR_TARGET="--sysroot=$(PREFIX)/$(TARGET)" \
+	CPPFLAGS_FOR_TARGET="--sysroot=$(PREFIX)/$(TARGET)" && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
 	$(MAKE) -C gcc install-common install-cpp install- install-driver install-headers install-man
@@ -133,12 +135,14 @@ cross-g++: cross-binutils cross-gcc cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE)/ 
 	mkdir -p build/g++ && cd build/g++ && \
 	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) \
 	--enable-languages="c++" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls \
-	--disable-libssp --with-newlib --without-headers --disable-shared \
+	--disable-libssp --with-newlib --disable-shared \
 	--disable-threads --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch \
 	--disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs \
 	--enable-libstdcxx-allocator=malloc --with-bugurl=$(BUG_URL) \
 	--enable-cxx-flags=$(CFLAGS_FOR_TARGET) --with-sysroot=$(PREFIX)/$(TARGET) \
-	CFLAGS_FOR_TARGET=$(CFLAGS_FOR_TARGET) && \
+	--with-build-sysroot=$(PREFIX)/$(TARGET) --with-build-time-tools=$(PREFIX)/$(TARGET)/bin \
+	CFLAGS_FOR_TARGET=$(CFLAGS_FOR_TARGET)  LDFLAGS_FOR_TARGET="--sysroot=$(PREFIX)/$(TARGET)" \
+	CPPFLAGS_FOR_TARGET="--sysroot=$(PREFIX)/$(TARGET)" && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
 	$(MAKE) -C gcc install-common install-cpp install- install-driver install-headers install-man

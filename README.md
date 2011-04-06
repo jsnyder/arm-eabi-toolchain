@@ -60,6 +60,16 @@ installed to to your .bash_profile, .zshrc, etc..:
 
 > export PATH=$HOME/arm-cs-tools/bin:$PATH
 
+Extras From Binary Distribution
+-------------------------------
+
+Some of the CodeSourcery CS3 libraries are distributed with G++ Lite, but the sources for these are not made available, nor are the licensing terms in the binary release of G++ Lite permissive of my including a small compressed download of these libraries with this build file.  However, I have added a make target that should be able to pull down the binary Linux tarball extract these libraries and a few extras, and place them into the correct directories.  To use this, type the following *after* you have installed your toolchain:
+
+> make install-bin-extras
+
+NOTE: use of these libraries is untested by the creator of the Makefile.  It seemed simple enough to add this after a user had mentioned a desire to have these libraries available.
+
+
 Special Thanks
 --------------
 

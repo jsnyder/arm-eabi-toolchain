@@ -18,13 +18,14 @@ to compile all of this. You can get all of these on Mac OS X, by
 just installing the Apple Developer Tools which are free
 [here](http://developer.apple.com/Tools/). 
 
-If you haven’t installed gmp or mpfr, install them first:
+You will also need gmp, mpfr and mpc first.  I recommend installing
+these from [homebrew](https://github.com/mxcl/homebrew) for now.
+I'll add these to the Makefile once I have a consistent configuration
+that can be used for both Linux & OS X.
 
-> sudo make install-deps
+With homebrew you can install those dependencies like this:
 
-NOTE: The first time you run this, it will attempt to download the tarball for
-the CodeSourcery sources, which may take some time. It should not need to do
-this again for later steps (files needed will be extracted).
+> brew install mpfr gmp libmpc texinfo
 
 
 Requirements (Ubuntu)

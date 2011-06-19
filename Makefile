@@ -42,12 +42,12 @@ endif
 
 downloadbin: $(LOCAL_BIN)
 	@(t1=`openssl md5 $(LOCAL_BIN) | cut -f 2 -d " " -` && \
-	test $$t1 = $(BIN_MD5_CHECKSUM) || \
+	test $$t1=$(BIN_MD5_CHECKSUM) || \
 	echo "Bad Checksum! Please remove the following file and retry:\n$(LOCAL_BIN)")
 
 downloadsrc: $(LOCAL_SOURCE)
 	@(t1=`openssl md5 $(LOCAL_SOURCE) | cut -f 2 -d " " -` && \
-	test $$t1 = $(SOURCE_MD5_CHECKSUM) || \
+	test $$t1=$(SOURCE_MD5_CHECKSUM) || \
 	echo "Bad Checksum! Please remove the following file and retry:\n$(LOCAL_SOURCE)")
 
 $(LOCAL_BASE)/%-$(CS_VERSION).tar.bz2 : downloadsrc

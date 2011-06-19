@@ -2,19 +2,19 @@ SHELL = /bin/bash
 TARGET=arm-none-eabi
 PREFIX=$(HOME)/arm-cs-tools/
 PROCS=4
-CS_BASE = 2010.09
-CS_REV = 51
+CS_BASE = 2011.03
+CS_REV = 42
 GCC_VERSION = 4.5
 MPC_VERSION = 0.8.1
 CS_VERSION = $(CS_BASE)-$(CS_REV)
 LOCAL_BASE = arm-$(CS_VERSION)-arm-none-eabi
 LOCAL_SOURCE = $(LOCAL_BASE).src.tar.bz2
 LOCAL_BIN = $(LOCAL_BASE)-i686-pc-linux-gnu.tar.bz2
-SOURCE_URL = http://www.codesourcery.com/sgpp/lite/arm/portal/package7812/public/arm-none-eabi/$(LOCAL_SOURCE)
+SOURCE_URL = http://www.codesourcery.com/sgpp/lite/arm/portal/package8734/public/arm-none-eabi/$(LOCAL_SOURCE)
 BIN_URL = http://www.codesourcery.com/sgpp/lite/arm/portal/package7813/public/arm-none-eabi/$(LOCAL_BIN)
 
-SOURCE_MD5_CHCKSUM = 0ab992015a71443efbf3654f33ffc675
-BIN_MD5_CHECKSUM = 273e0c8da3111244957935aa4d6da197
+SOURCE_MD5_CHCKSUM = 7c302162ec813d039b8388bd7d2b4176
+BIN_MD5_CHECKSUM = b1bd1dcb1f922d815ba7fa8d0e6fcd37
 
 install-cross: cross-binutils cross-gcc cross-g++ cross-newlib cross-gdb
 install-deps: gmp mpfr mpc

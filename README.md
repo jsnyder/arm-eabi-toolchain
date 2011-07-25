@@ -53,6 +53,7 @@ Next build the toolchain:
 *NOTE:* If you are on Mac OS X and are running XCode 4.1 or a similar version you may find that it will fail during the build of libgcc as discussed in issue #10.  To work around this, build using using these two commands instead of the above:
 
 > CC=clang make cross-binutils cross-gcc cross-g++ cross-newlib
+>
 > make cross-gdb
 
 

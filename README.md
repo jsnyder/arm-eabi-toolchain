@@ -62,12 +62,17 @@ directory called arm-cs-tools in your home directory. If you want to install
 to another location, feel free to change the export lines and to adjust the
 definitions at the top of the Makefile.
 
+To clean up when you're done and you've installed the toolchain you can clean up the intermediate files with the following command:
+
+> make clean
+
 Keep in mind that the Makefile does install at the end of each build.
 
 Once you’re done, you’ll likely want to add the path where the compiler was
 installed to to your .bash_profile, .zshrc, etc..:
 
 > export PATH=$HOME/arm-cs-tools/bin:$PATH
+
 
 Extras From Binary Distribution
 -------------------------------

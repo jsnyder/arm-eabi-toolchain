@@ -12,8 +12,8 @@ CS_VERSION 	= $(CS_BASE)-$(CS_REV)
 LOCAL_BASE 	= arm-$(CS_VERSION)-arm-none-eabi
 LOCAL_SOURCE 	= $(LOCAL_BASE).src.tar.bz2
 LOCAL_BIN 	= $(LOCAL_BASE)-i686-pc-linux-gnu.tar.bz2
-SOURCE_URL 	= http://www.codesourcery.com/sgpp/lite/arm/portal/package8733/public/arm-none-eabi/$(LOCAL_SOURCE)
-BIN_URL 	= http://www.codesourcery.com/sgpp/lite/arm/portal/package8734/public/arm-none-eabi/$(LOCAL_BIN)
+SOURCE_URL 	= http://sourcery.mentor.com/sgpp/lite/arm/portal/package8733/public/arm-none-eabi/$(LOCAL_SOURCE)
+BIN_URL 	= http://sourcery.mentor.com/sgpp/lite/arm/portal/package8734/public/arm-none-eabi/$(LOCAL_BIN)
 
 
 SOURCE_MD5_CHCKSUM = 7c302162ec813d039b8388bd7d2b4176

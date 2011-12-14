@@ -64,9 +64,11 @@ endif
 
 arm-$(CS_BASE): downloadbin
 ifeq ($(USER),root)
-	sudo -u $(SUDO_USER) tar -jtf $(LOCAL_BIN) | grep -e '.*cs3.*[ah]$$' -e '.*\.ld' | xargs tar -jxvf $(LOCAL_BIN)
+	sudo -u $(SUDO_USER) tar -jtf $(LOCAL_BIN) | grep -e '.*cs3.*[ah]$$' -e '.*\.ld' \
+	-e '.*.\.inc' | xargs tar -jxvf $(LOCAL_BIN)
 else
-	tar -jtf $(LOCAL_BIN) | grep -e '.*cs3.*[ah]$$' -e '.*\.ld' | xargs tar -jxvf $(LOCAL_BIN)
+	tar -jtf $(LOCAL_BIN) | grep -e '.*cs3.*[ah]$$' -e '.*\.ld' \
+	 -e '.*.\.inc'  | xargs tar -jxvf $(LOCAL_BIN)
 endif
 
 install-bin-extras: arm-$(CS_BASE)

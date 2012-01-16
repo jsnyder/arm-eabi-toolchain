@@ -1,23 +1,25 @@
 SHELL = /bin/bash
 TARGET = arm-none-eabi
 PREFIX ?= $(HOME)/arm-cs-tools/
-PROCS = 4
+PROCS ?= 4
 
-CS_BASE		= 2011.03
-CS_REV 		= 42
-GCC_VERSION 	= 4.5
-MPC_VERSION 	= 0.8.1
+CS_BASE		?= 2011.03
+CS_REV 		?= 42
+GCC_VERSION 	?= 4.5
+MPC_VERSION 	?= 0.8.1
+SOURCE_PACKAGE	?= 8733
+BIN_PACKAGE	?= 8734
+
 CS_VERSION 	= $(CS_BASE)-$(CS_REV)
 
 LOCAL_BASE 	= arm-$(CS_VERSION)-arm-none-eabi
 LOCAL_SOURCE 	= $(LOCAL_BASE).src.tar.bz2
 LOCAL_BIN 	= $(LOCAL_BASE)-i686-pc-linux-gnu.tar.bz2
-SOURCE_URL 	= http://sourcery.mentor.com/sgpp/lite/arm/portal/package8733/public/arm-none-eabi/$(LOCAL_SOURCE)
-BIN_URL 	= http://sourcery.mentor.com/sgpp/lite/arm/portal/package8734/public/arm-none-eabi/$(LOCAL_BIN)
+SOURCE_URL 	= http://sourcery.mentor.com/sgpp/lite/arm/portal/package$(SOURCE_PACKAGE)/public/arm-none-eabi/$(LOCAL_SOURCE)
+BIN_URL 	= http://sourcery.mentor.com/sgpp/lite/arm/portal/package$(BIN_PACKAGE)/public/arm-none-eabi/$(LOCAL_BIN)
 
-
-SOURCE_MD5_CHCKSUM = 7c302162ec813d039b8388bd7d2b4176
-BIN_MD5_CHECKSUM = b1bd1dcb1f922d815ba7fa8d0e6fcd37
+SOURCE_MD5_CHCKSUM ?= 7c302162ec813d039b8388bd7d2b4176
+BIN_MD5_CHECKSUM ?= b1bd1dcb1f922d815ba7fa8d0e6fcd37
 
 install-cross: cross-binutils cross-gcc cross-g++ cross-newlib cross-gdb
 install-deps: gmp mpfr mpc
@@ -150,14 +152,14 @@ cross-gcc: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
 	pushd ../../gcc-$(GCC_VERSION)-$(CS_BASE) ; \
 	make clean ; \
 	popd ; \
-	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) --enable-languages="c" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls --disable-libssp --with-newlib --without-headers --disable-shared --disable-threads --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch --disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs && \
+	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) $(DEPENDENCIES) --enable-languages="c" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls --disable-libssp --with-newlib --without-headers --disable-shared --disable-threads --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch --disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
 	$(MAKE) -C gcc install-common install-cpp install- install-driver install-headers
 
 cross-g++: cross-binutils cross-gcc cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
 	mkdir -p build/g++ && cd build/g++ && \
-	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) --enable-languages="c++" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls --disable-libssp --with-newlib --without-headers --disable-shared --disable-threads --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch --disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs && \
+	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) $(DEPENDENCIES) --enable-languages="c++" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls --disable-libssp --with-newlib --without-headers --disable-shared --disable-threads --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch --disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
 	$(MAKE) -C gcc install-common install-cpp install- install-driver install-headers

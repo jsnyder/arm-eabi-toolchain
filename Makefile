@@ -2,6 +2,7 @@ SHELL = /bin/bash
 TARGET = arm-none-eabi
 PREFIX ?= $(HOME)/arm-cs-tools/
 PROCS ?= 4
+GIT_REV	= $(shell git rev-parse --verify HEAD --short)
 
 CS_BASE		?= 2011.03
 CS_REV 		?= 42
@@ -20,6 +21,9 @@ BIN_URL 	= http://sourcery.mentor.com/sgpp/lite/arm/portal/package$(BIN_PACKAGE)
 
 SOURCE_MD5_CHCKSUM ?= 7c302162ec813d039b8388bd7d2b4176
 BIN_MD5_CHECKSUM ?= b1bd1dcb1f922d815ba7fa8d0e6fcd37
+
+BUG_URL ?= https://github.com/jsnyder/arm-eabi-toolchain
+PKG_VERSION ?= "ARM EABI 32-bit GNU Toolchain-CS-$(CS_BASE)-$(CS_REV)-$(GIT_REV)"
 
 install-cross: cross-binutils cross-gcc cross-g++ cross-newlib cross-gdb
 install-deps: gmp mpfr mpc
@@ -143,7 +147,9 @@ cross-binutils: binutils-$(CS_BASE)
 	pushd ../../binutils-$(CS_BASE) ; \
 	make clean ; \
 	popd ; \
-	../../binutils-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) --disable-nls --disable-werror && \
+	../../binutils-$(CS_BASE)/configure --prefix=$(PREFIX)		\
+	--target=$(TARGET) --with-pkgversion=$(PKG_VERSION)		\
+	--with-bugurl=$(BUG_URL) --disable-nls --disable-werror && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-host install-target
 
@@ -152,25 +158,47 @@ cross-gcc: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
 	pushd ../../gcc-$(GCC_VERSION)-$(CS_BASE) ; \
 	make clean ; \
 	popd ; \
-	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) $(DEPENDENCIES) --enable-languages="c" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls --disable-libssp --with-newlib --without-headers --disable-shared --disable-threads --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch --disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs && \
+	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure			\
+	--prefix=$(PREFIX) --with-pkgversion=$(PKG_VERSION)		\
+	--with-bugurl=$(BUG_URL) --target=$(TARGET) $(DEPENDENCIES)	\
+	--enable-languages="c" --with-gnu-ld --with-gnu-as		\
+	--with-newlib --disable-nls --disable-libssp --with-newlib	\
+	--without-headers --disable-shared --disable-threads		\
+	--disable-libmudflap --disable-libgomp				\
+	--disable-libstdcxx-pch --disable-libunwind-exceptions		\
+	--disable-libffi --enable-extra-sgxxlite-multilibs && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
 	$(MAKE) -C gcc install-common install-cpp install- install-driver install-headers
 
 cross-g++: cross-binutils cross-gcc cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
 	mkdir -p build/g++ && cd build/g++ && \
-	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) $(DEPENDENCIES) --enable-languages="c++" --with-gnu-ld --with-gnu-as --with-newlib --disable-nls --disable-libssp --with-newlib --without-headers --disable-shared --disable-threads --disable-libmudflap --disable-libgomp --disable-libstdcxx-pch --disable-libunwind-exceptions --disable-libffi --enable-extra-sgxxlite-multilibs && \
+	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure			\
+	--prefix=$(PREFIX) --with-pkgversion=$(PKG_VERSION)		\
+	--with-bugurl=$(BUG_URL) --target=$(TARGET) $(DEPENDENCIES)	\
+	--enable-languages="c++" --with-gnu-ld --with-gnu-as		\
+	--with-newlib --disable-nls --disable-libssp --with-newlib	\
+	--without-headers --disable-shared --disable-threads		\
+	--disable-libmudflap --disable-libgomp				\
+	--disable-libstdcxx-pch --disable-libunwind-exceptions		\
+	--disable-libffi --enable-extra-sgxxlite-multilibs && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
 	$(MAKE) -C gcc install-common install-cpp install- install-driver install-headers
 
-NEWLIB_FLAGS="-ffunction-sections -fdata-sections -DPREFER_SIZE_OVER_SPEED -D__OPTIMIZE_SIZE__ -Os -fomit-frame-pointer -fno-unroll-loops -D__BUFSIZ__=256 -mabi=aapcs"
+NEWLIB_FLAGS="-ffunction-sections -fdata-sections			\
+-DPREFER_SIZE_OVER_SPEED -D__OPTIMIZE_SIZE__ -Os -fomit-frame-pointer	\
+-fno-unroll-loops -D__BUFSIZ__=256 -mabi=aapcs"
+
 cross-newlib: cross-binutils cross-gcc newlib-$(CS_BASE)
 	mkdir -p build/newlib && cd build/newlib && \
 	pushd ../../newlib-$(CS_BASE) ; \
 	make clean ; \
 	popd ; \
-	../../newlib-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) --disable-newlib-supplied-syscalls --disable-libgloss --disable-nls --disable-shared --enable-newlib-io-long-long && \
+	../../newlib-$(CS_BASE)/configure --prefix=$(PREFIX)	\
+	--target=$(TARGET) --disable-newlib-supplied-syscalls	\
+	--disable-libgloss --disable-nls --disable-shared	\
+	--enable-newlib-io-long-long && \
 	$(MAKE) -j$(PROCS) CFLAGS_FOR_TARGET=$(NEWLIB_FLAGS) CCASFLAGS=$(NEWLIB_FLAGS) && \
 	$(MAKE) install
 
@@ -179,7 +207,7 @@ cross-gdb: gdb-$(CS_BASE)
 	pushd ../../gdb-$(CS_BASE) ; \
 	make clean ; \
 	popd ; \
-	../../gdb-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) --disable-werror && \
+	../../gdb-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) --with-pkgversion=$(PKG_VERSION) --with-bugurl=$(BUG_URL) --disable-werror && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-host install-target
 

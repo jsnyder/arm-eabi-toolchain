@@ -9,7 +9,9 @@ Note: If you have previously built a toolchain of another version, out
 of the same builder directory, make sure to do the following first
 before building with newer sources:
 
-> make clean
+```bash
+make clean
+```
 
 Also, make sure that you don't have another
 arm-non-eabi-[gcc,g++,ld,gdb] etc toolchain in your path when you
@@ -33,7 +35,9 @@ that can be used for both Linux & OS X.
 
 With homebrew you can install those dependencies like this:
 
-> brew install mpfr gmp libmpc libelf texinfo
+```bash
+brew install mpfr gmp libmpc libelf texinfo
+```
 
 
 Requirements (Ubuntu)
@@ -52,36 +56,47 @@ Main Build Instructions
 
 Next prep for building the main toolchain:
 
-> mkdir -p $HOME/arm-cs-tools/bin
->
-> export PATH=$HOME/arm-cs-tools/bin:$PATH
+```bash
+mkdir -p $HOME/arm-cs-tools/bin
+
+export PATH=$HOME/arm-cs-tools/bin:$PATH
+```
 
 Next build the toolchain:
 
-> make install-cross
+```bash
+make install-cross
+```
 
 You should be able to also specify a specific install/prefix location
 by building using the following type of invokation:
 
-> PREFIX=$HOME/arm-cs-tools make install-cross
+```bash
+PREFIX=$HOME/arm-cs-tools make install-cross
+```
 
 By default the build attempts to use up to 4 parallel tasks, you can
 adjust this behavior by redefining PROCS:
 
-> PROCS=8 make install-cross
+```bash
+PROCS=8 make install-cross
+```
 
 *NOTE:* If you are on Mac OS X and are running XCode 4.1 or a similar
  version you may find that it will fail during the build of libgcc as
  discussed in issue #10.  To work around this, build using using these
  two commands instead of the above:
 
-> CC=clang make cross-binutils cross-gcc cross-newlib
->
-> make cross-gdb
+```bash
+CC=clang make cross-binutils cross-gcc cross-newlib
+make cross-gdb
+```
 
 or you can build the entire toolchain with gcc-4.2:
 
-> CC=gcc-4.2 make install-cross
+```bash
+CC=gcc-4.2 make install-cross
+```
 
 
 This should build the compiler, newlib, gdb, etc.. and install them all into a
@@ -94,12 +109,16 @@ Keep in mind that the Makefile does install at the end of each build.
 Once you’re done, you’ll likely want to add the path where the compiler was
 installed to to your .bash_profile, .zshrc, etc..:
 
-> export PATH=$HOME/arm-cs-tools/bin:$PATH
+```bash
+export PATH=$HOME/arm-cs-tools/bin:$PATH
+```
 
 To clean up when you're done and you've installed the toolchain you
 can clean up the intermediate files with the following command:
 
-> make clean
+```bash
+make clean
+```
 
 Newlib Build Customization
 --------------------------
@@ -131,16 +150,21 @@ implementation.
 If you want the standard options that CodeSourcery uses when building
 Newlib, which are as follows:
 
-> CFLAGS_FOR_TARGET="-g -O2 -fno-unroll-loops"
+```bash
+CFLAGS_FOR_TARGET="-g -O2 -fno-unroll-loops"
+```
 
 Simply prepend the make command as follows:
 
-> MATCH_CS=false make install-cross
+```bash
+MATCH_CS=false make install-cross
+```
 
 or define your own Newlib flags:
 
-> NEWLIB_FLAGS="-g -O2 -fno-unroll-loops" make install-cross
-
+```bash
+NEWLIB_FLAGS="-g -O2 -fno-unroll-loops" make install-cross
+```
 
 Extras From Binary Distribution
 -------------------------------
@@ -154,17 +178,23 @@ to pull down the binary Linux tarball extract these libraries and a
 few extras, and place them into the correct directories.  To use this,
 type the following *after* you have installed your toolchain:
 
-> make install-bin-extras
+```bash
+make install-bin-extras
+```
 
 If you need the binary extras installed at a specific prefix, you can
 use the following style of incantation:
 
-> PREFIX=/some/other/location make install-bin-extras
+```bash
+PREFIX=/some/other/location make install-bin-extras
+```
 
 So, if you had placed your pre-built binaries at
 /usr/local/arm-cs-tools, you could use the following:
 
-> PREFIX=/usr/local/arm-cs-tools make install-bin-extras
+```bash
+PREFIX=/usr/local/arm-cs-tools make install-bin-extras
+```
 
 NOTE: use of these libraries is untested by the creator of the
 Makefile.  It seemed simple enough to add this after a user had

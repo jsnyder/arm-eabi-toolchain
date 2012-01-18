@@ -169,10 +169,11 @@ cross-gcc-first: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
 	--prefix=$(PREFIX) --with-pkgversion=$(PKG_VERSION)		\
 	--with-bugurl=$(BUG_URL) --target=$(TARGET) $(DEPENDENCIES)	\
 	--disable-libquadmath --enable-languages="c" --with-gnu-ld	\
-	--with-gnu-as --with-newlib --disable-nls --disable-libssp	\
+	--with-gnu-as --disable-nls --disable-libssp	\
 	--with-newlib --without-headers --disable-shared --enable-lto	\
 	--disable-threads --disable-libmudflap --disable-libgomp	\
 	--disable-libstdcxx-pch --disable-libunwind-exceptions		\
+	--disable-decimal-float \
 	--disable-libffi --enable-extra-sgxxlite-multilibs $(CS_SPECS) && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
@@ -184,10 +185,10 @@ cross-gcc: cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VERSION)-$(CS_B
 	--prefix=$(PREFIX) --with-pkgversion=$(PKG_VERSION)		\
 	--with-bugurl=$(BUG_URL) --target=$(TARGET) $(DEPENDENCIES)	\
 	--enable-languages="c,c++" --with-gnu-ld --with-gnu-as		\
-	--with-newlib --disable-nls --disable-libssp --with-newlib	\
+	--with-newlib --disable-nls --disable-libss	\
 	--disable-shared --disable-threads --with-headers=yes		\
 	--disable-libmudflap --disable-libgomp	 --enable-lto		\
-	--disable-libstdcxx-pch --disable-libffi			\
+	--disable-libstdcxx-pch			\
 	--enable-extra-sgxxlite-multilibs $(CS_SPECS) && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \

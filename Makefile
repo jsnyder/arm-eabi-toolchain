@@ -204,7 +204,7 @@ cross-newlib: cross-binutils cross-gcc-first newlib-$(CS_BASE)
 	popd ; \
 	../../newlib-$(CS_BASE)/configure --prefix=$(PREFIX)	\
 	--target=$(TARGET) --disable-newlib-supplied-syscalls	\
-	--disable-libgloss --disable-nls --disable-shared	\
+	--disable-libgloss --disable-nls	\
 	--enable-newlib-io-long-long --enable-newlib-register-fini && \
 	$(MAKE) -j$(PROCS) CFLAGS_FOR_TARGET=$(NEWLIB_FLAGS) CCASFLAGS=$(NEWLIB_FLAGS) && \
 	$(MAKE) install

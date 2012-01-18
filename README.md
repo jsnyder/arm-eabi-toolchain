@@ -82,21 +82,17 @@ Newlib Build Customization
 
 By default, this build enables a number of extra optimizations (most of which relate to reducing code size) for Newlib by defining the following:
 
-> CFLAGS_FOR_TARGET=-ffunction-sections -fdata-sections # put code and data into separate sections allowing for link-time optimization
->
-> -DPREFER_SIZE_OVER_SPEED -D__OPTIMIZE_SIZE__ \ # choose code paths within newlib known to generate smaller code, potentially at the cost of speed
->
-> -Os \ # same as O2, but turns off optimizations that would increase code size
->
-> -fomit-frame-pointer	\ # don't keep the frame pointer in a register for functions that don't need one
->
-> -fno-unroll-loops \ # don't unroll loops
->
-> -D__BUFSIZ__=256 \ # limit __BUFSIZ__ allocation size default to 256 bytes
->
-> -mabi=aapcs # enable use of arm procedure call standard (not sure if this is needed any more)
->
-> CCASFLAGS=$(CFLAGS_FOR_TARGET)
+```bash
+CFLAGS_FOR_TARGET="\
+        -ffunction-sections -fdata-sections          \ # put code and data into separate sections allowing for link-time
+        -DPREFER_SIZE_OVER_SPEED -D__OPTIMIZE_SIZE__ \ # choose code paths within newlib known to generate smaller code, potentially at the cost of speed
+        -Os                                          \ # same as O2, but turns off optimizations that would increase code size
+        -fomit-frame-pointer                         \ # don't keep the frame pointer in a register for functions that don't need one
+        -fno-unroll-loops                            \ # don't unroll loops
+        -D__BUFSIZ__=256                             \ # limit __BUFSIZ__ allocation size default to 256 bytes
+        -mabi=aapcs"                                   # enable use of arm procedure call standard (not sure if this is needed any more)
+CCASFLAGS=$(CFLAGS_FOR_TARGET)
+```
 
 If you want the standard options that CodeSourcery uses when building Newlib, which are as follows:
 

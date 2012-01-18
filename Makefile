@@ -177,7 +177,7 @@ cross-gcc-first: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
 	--disable-libffi --enable-extra-sgxxlite-multilibs $(CS_SPECS) && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
-	$(MAKE) -C install-gcc
+	$(MAKE) install-gcc
 
 cross-gcc: cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
 	mkdir -p build/gcc-final && cd build/gcc-final && \

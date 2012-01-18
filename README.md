@@ -1,13 +1,21 @@
 ARM EABI Toolchain Builder
 ==========================
 
-This build system has been tested on Mac OS X 10.6 (should also work on 10.5).
-Small modifications may be needed in order to make it work with other
-platforms.
+This build system has been tested on Mac OS X 10.6 (should also work
+on 10.5) and Ubuntu 11.04.  Small modifications may be needed in order
+to make it work with other platforms.
 
-Note: If you have previously built a toolchain of another version, out of the same builder directory, make sure to do the following first before building with newer sources:
+Note: If you have previously built a toolchain of another version, out
+of the same builder directory, make sure to do the following first
+before building with newer sources:
 
 > make clean
+
+Also, make sure that you don't have another
+arm-non-eabi-[gcc,g++,ld,gdb] etc toolchain in your path when you
+build, whether it is a previous version of this same toolchain or a
+binary toolchain from another provider.  This may end up influencing
+how newlib, in particular, gets compiled.
 
 
 Requirements (OS X)
@@ -31,9 +39,12 @@ With homebrew you can install those dependencies like this:
 Requirements (Ubuntu)
 ---------------------
 
-These instructions should now also work on Ubuntu Linux, provided the following packages have been installed prior to attempting the build:
+These instructions should now also work on Ubuntu Linux, provided the
+following packages have been installed prior to attempting the build:
 
-> sudo apt-get install curl flex bison libgmp3-dev libmpfr-dev libelf-dev autoconf build-essential libncurses5-dev libmpc-dev texinfo
+> sudo apt-get install curl flex bison libgmp3-dev libmpfr-dev
+  libelf-dev autoconf build-essential libncurses5-dev libmpc-dev
+  texinfo
 
 
 Main Build Instructions
@@ -49,15 +60,20 @@ Next build the toolchain:
 
 > make install-cross
 
-You should be able to also specify a specific install/prefix location by building using the following type of invokation:
+You should be able to also specify a specific install/prefix location
+by building using the following type of invokation:
 
 > PREFIX=$HOME/arm-cs-tools make install-cross
 
-By default the build attempts to use up to 4 parallel tasks, you can adjust this behavior by redefining PROCS:
+By default the build attempts to use up to 4 parallel tasks, you can
+adjust this behavior by redefining PROCS:
 
 > PROCS=8 make install-cross
 
-*NOTE:* If you are on Mac OS X and are running XCode 4.1 or a similar version you may find that it will fail during the build of libgcc as discussed in issue #10.  To work around this, build using using these two commands instead of the above:
+*NOTE:* If you are on Mac OS X and are running XCode 4.1 or a similar
+ version you may find that it will fail during the build of libgcc as
+ discussed in issue #10.  To work around this, build using using these
+ two commands instead of the above:
 
 > CC=clang make cross-binutils cross-gcc cross-newlib
 >
@@ -88,7 +104,9 @@ can clean up the intermediate files with the following command:
 Newlib Build Customization
 --------------------------
 
-By default, this build enables a number of extra optimizations (most of which relate to reducing code size) for Newlib by defining the following:
+By default, this build enables a number of extra optimizations (most
+of which relate to reducing code size) for Newlib by defining the
+following:
 
 ```bash
 CFLAGS_FOR_TARGET="\
@@ -160,4 +178,4 @@ Special Thanks
    [Makefile](http://elua-development.2368040.n2.nabble.com/Building-GCC-for-Cortex-td2421927.html)
    as a starting point.
 
- * Liviu Ionescu for numerous comments suggestions
+ * Liviu Ionescu for numerous comments suggestions/suggestions and fixes.

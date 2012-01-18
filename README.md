@@ -53,12 +53,19 @@ You should be able to also specify a specific install/prefix location by buildin
 
 > PREFIX=$HOME/arm-cs-tools make install-cross
 
+By default the build attempts to use up to 4 parallel tasks, you can adjust this behavior by redefining PROCS:
+
+> PROCS=8 make install-cross
 
 *NOTE:* If you are on Mac OS X and are running XCode 4.1 or a similar version you may find that it will fail during the build of libgcc as discussed in issue #10.  To work around this, build using using these two commands instead of the above:
 
 > CC=clang make cross-binutils cross-gcc cross-newlib
 >
 > make cross-gdb
+
+or you can build the entire toolchain with gcc-4.2:
+
+> CC=gcc-4.2 make install-cross
 
 
 This should build the compiler, newlib, gdb, etc.. and install them all into a
@@ -73,7 +80,8 @@ installed to to your .bash_profile, .zshrc, etc..:
 
 > export PATH=$HOME/arm-cs-tools/bin:$PATH
 
-To clean up when you're done and you've installed the toolchain you can clean up the intermediate files with the following command:
+To clean up when you're done and you've installed the toolchain you
+can clean up the intermediate files with the following command:
 
 > make clean
 
@@ -85,49 +93,71 @@ By default, this build enables a number of extra optimizations (most of which re
 ```bash
 CFLAGS_FOR_TARGET="\
  -ffunction-sections -fdata-sections          \ # put code and data into separate sections allowing for link-time
- -DPREFER_SIZE_OVER_SPEED -D__OPTIMIZE_SIZE__ \ # choose code paths within newlib known to generate smaller code, potentially at the cost of speed
+ -DPREFER_SIZE_OVER_SPEED -D__OPTIMIZE_SIZE__ \ # pick simpler, smaller code over larger optimized code
  -Os                                          \ # same as O2, but turns off optimizations that would increase code size
  -fomit-frame-pointer                         \ # don't keep the frame pointer in a register for functions that don't need one
  -fno-unroll-loops                            \ # don't unroll loops
- -D__BUFSIZ__=256                             \ # limit __BUFSIZ__ allocation size default to 256 bytes
- -mabi=aapcs"                                   # enable use of arm procedure call standard (not sure if this is needed any more)
+ -D__BUFSIZ__=256                             \ # limit default buffer size to 256 rather than 1024
+ -mabi=aapcs"                                 \ # enable use of arm procedure call standard (not sure if this is needed any more)
 CCASFLAGS=$(CFLAGS_FOR_TARGET)
 ```
 
-If you want the standard options that CodeSourcery uses when building Newlib, which are as follows:
+For an example of what the ```PREFER_SIZE_OVER_SPEED``` and
+```__OPTIMIZE_SIZE__``` options do, take a look at the following
+[memcpy.c](https://gist.github.com/1636109) extracted from
+newlib. Often what one is giving up is manually unrolled loops or
+hand-coded assembler that compiles to sizes larger than a simple C
+implementation.
+
+
+If you want the standard options that CodeSourcery uses when building
+Newlib, which are as follows:
 
 > CFLAGS_FOR_TARGET="-g -O2 -fno-unroll-loops"
 
 Simply prepend the make command as follows:
 
-> OPT_NEWLIB_SIZE=false make install-cross
+> MATCH_CS=false make install-cross
 
 or define your own Newlib flags:
 
 > NEWLIB_FLAGS="-g -O2 -fno-unroll-loops" make install-cross
 
 
-
 Extras From Binary Distribution
 -------------------------------
 
-Some of the CodeSourcery CS3 libraries are distributed with G++ Lite, but the sources for these are not made available, nor are the licensing terms in the binary release of G++ Lite permissive of my including a small compressed download of these libraries with this build file.  However, I have added a make target that should be able to pull down the binary Linux tarball extract these libraries and a few extras, and place them into the correct directories.  To use this, type the following *after* you have installed your toolchain:
+Some of the CodeSourcery CS3 libraries are distributed with G++ Lite,
+but the sources for these are not made available, nor are the
+licensing terms in the binary release of G++ Lite permissive of my
+including a small compressed download of these libraries with this
+build file.  However, I have added a make target that should be able
+to pull down the binary Linux tarball extract these libraries and a
+few extras, and place them into the correct directories.  To use this,
+type the following *after* you have installed your toolchain:
 
 > make install-bin-extras
 
-If you need the binary extras installed at a specific prefix, you can use the following style of incantation:
+If you need the binary extras installed at a specific prefix, you can
+use the following style of incantation:
 
 > PREFIX=/some/other/location make install-bin-extras
 
-So, if you had placed your pre-built binaries at /usr/local/arm-cs-tools, you could use the following:
+So, if you had placed your pre-built binaries at
+/usr/local/arm-cs-tools, you could use the following:
 
 > PREFIX=/usr/local/arm-cs-tools make install-bin-extras
 
-NOTE: use of these libraries is untested by the creator of the Makefile.  It seemed simple enough to add this after a user had mentioned a desire to have these libraries available.
+NOTE: use of these libraries is untested by the creator of the
+Makefile.  It seemed simple enough to add this after a user had
+mentioned a desire to have these libraries available.
 
 
 Special Thanks
 --------------
 
-Special thanks to Rob Emanuele for the basis of this Makefile:
-http://elua-development.2368040.n2.nabble.com/Building-GCC-for-Cortex-td2421927.html
+ * Rob Emanuele for the basis of this
+   [Makefile](http://elua-development.2368040.n2.nabble.com/Building-GCC-for-Cortex-td2421927.html)
+   as a starting point.
+
+ * Liviu Ionescu for numerous comments suggestions

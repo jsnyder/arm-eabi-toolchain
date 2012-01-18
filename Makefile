@@ -11,6 +11,7 @@ MPC_VERSION 	?= 0.8.1
 SOURCE_PACKAGE	?= 9739
 BIN_PACKAGE	?= 9740
 
+MATCH_CS ?= false
 OPT_NEWLIB_SIZE ?= true
 
 CS_VERSION 	= $(CS_BASE)-$(CS_REV)
@@ -26,6 +27,11 @@ BIN_MD5_CHECKSUM ?= 2f2d73429ce70dfb848d7b44b3d24d3f
 
 BUG_URL ?= https://github.com/jsnyder/arm-eabi-toolchain
 PKG_VERSION ?= "ARM EABI 32-bit GNU Toolchain-CS-$(CS_BASE)-$(CS_REV)-$(GIT_REV)"
+
+
+ifeq ($(MATCH_CS),true)
+NEWLIB_FLAGS?="-g -O2 -fno-unroll-loops"
+endif
 
 install-cross: cross-binutils cross-gcc cross-newlib cross-gdb
 install-deps: gmp mpfr mpc
@@ -195,6 +201,8 @@ cross-gcc: cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VERSION)-$(CS_B
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
 	$(MAKE) install-gcc
+
+
 
 ifeq ($(OPT_NEWLIB_SIZE),true)
 NEWLIB_FLAGS?="-ffunction-sections -fdata-sections			\

@@ -177,7 +177,7 @@ cross-gcc-first: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
 	--disable-libffi --enable-extra-sgxxlite-multilibs $(CS_SPECS) && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
-	$(MAKE) -C gcc install-common install-cpp install- install-driver install-headers
+	$(MAKE) -C install-gcc
 
 cross-gcc: cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
 	mkdir -p build/gcc-final && cd build/gcc-final && \
@@ -192,7 +192,7 @@ cross-gcc: cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VERSION)-$(CS_B
 	--enable-extra-sgxxlite-multilibs $(CS_SPECS) && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
-	$(MAKE) -C gcc install-common install-cpp install- install-driver install-headers
+	$(MAKE) install-gcc
 
 NEWLIB_FLAGS="-ffunction-sections -fdata-sections			\
 -DPREFER_SIZE_OVER_SPEED -D__OPTIMIZE_SIZE__ -Os -fomit-frame-pointer	\

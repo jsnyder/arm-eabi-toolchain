@@ -16,7 +16,7 @@ Requirements (OS X)
 You will need to have GCC, make, binutils and latex installed on your machine
 to compile all of this. You can get all of these on Mac OS X, by
 just installing the Apple Developer Tools which are free
-[here](http://developer.apple.com/Tools/). 
+[here](http://developer.apple.com/Tools/).
 
 You will also need gmp, mpfr and mpc first.  I recommend installing
 these from [homebrew](https://github.com/mxcl/homebrew) for now.
@@ -25,7 +25,7 @@ that can be used for both Linux & OS X.
 
 With homebrew you can install those dependencies like this:
 
-> brew install mpfr gmp libmpc texinfo
+> brew install mpfr gmp libmpc libelf texinfo
 
 
 Requirements (Ubuntu)
@@ -33,7 +33,7 @@ Requirements (Ubuntu)
 
 These instructions should now also work on Ubuntu Linux, provided the following packages have been installed prior to attempting the build:
 
-> sudo apt-get install curl flex bison libgmp3-dev libmpfr-dev autoconf build-essential libncurses5-dev libmpc-dev texinfo
+> sudo apt-get install curl flex bison libgmp3-dev libmpfr-dev libelf-dev autoconf build-essential libncurses5-dev libmpc-dev texinfo
 
 
 Main Build Instructions
@@ -56,7 +56,7 @@ You should be able to also specify a specific install/prefix location by buildin
 
 *NOTE:* If you are on Mac OS X and are running XCode 4.1 or a similar version you may find that it will fail during the build of libgcc as discussed in issue #10.  To work around this, build using using these two commands instead of the above:
 
-> CC=clang make cross-binutils cross-gcc cross-g++ cross-newlib
+> CC=clang make cross-binutils cross-gcc cross-newlib
 >
 > make cross-gdb
 

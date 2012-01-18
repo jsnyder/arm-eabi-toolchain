@@ -11,6 +11,8 @@ MPC_VERSION 	?= 0.8.1
 SOURCE_PACKAGE	?= 9739
 BIN_PACKAGE	?= 9740
 
+OPT_NEWLIB_SIZE ?= true
+
 CS_VERSION 	= $(CS_BASE)-$(CS_REV)
 
 LOCAL_BASE 	= arm-$(CS_VERSION)-arm-none-eabi
@@ -194,9 +196,13 @@ cross-gcc: cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VERSION)-$(CS_B
 	$(MAKE) installdirs install-target && \
 	$(MAKE) install-gcc
 
-NEWLIB_FLAGS="-ffunction-sections -fdata-sections			\
+ifeq ($(OPT_NEWLIB_SIZE),true)
+NEWLIB_FLAGS?="-ffunction-sections -fdata-sections			\
 -DPREFER_SIZE_OVER_SPEED -D__OPTIMIZE_SIZE__ -Os -fomit-frame-pointer	\
 -fno-unroll-loops -D__BUFSIZ__=256 -mabi=aapcs"
+else
+NEWLIB_FLAGS?="-g -O2 -fno-unroll-loops"
+endif
 
 cross-newlib: cross-binutils cross-gcc-first newlib-$(CS_BASE)
 	mkdir -p build/newlib && cd build/newlib && \

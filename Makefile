@@ -153,12 +153,12 @@ cross-binutils: binutils-$(CS_BASE)
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-host install-target
 
-CS_SPECS="'--with-specs=%{save-temps: -fverbose-asm}		\
+CS_SPECS='--with-specs=%{save-temps: -fverbose-asm}		\
 -D__CS_SOURCERYGXX_MAJ__=2011 -D__CS_SOURCERYGXX_MIN__=9	\
 -D__CS_SOURCERYGXX_REV__=69 %{O2:%{!fno-remove-local-statics:	\
 -fremove-local-statics}}					\
 %{O*:%{O|O0|O1|O2|Os:;:%{!fno-remove-local-statics:		\
--fremove-local-statics}}}'"
+-fremove-local-statics}}}'
 
 cross-gcc-first: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
 	mkdir -p build/gcc-first && cd build/gcc-first && \
@@ -205,7 +205,7 @@ cross-newlib: cross-binutils cross-gcc-first newlib-$(CS_BASE)
 	../../newlib-$(CS_BASE)/configure --prefix=$(PREFIX)	\
 	--target=$(TARGET) --disable-newlib-supplied-syscalls	\
 	--disable-libgloss --disable-nls --disable-shared	\
-	--enable-newlib-io-long-long && \
+	--enable-newlib-io-long-long --enable-newlib-register-fini && \
 	$(MAKE) -j$(PROCS) CFLAGS_FOR_TARGET=$(NEWLIB_FLAGS) CCASFLAGS=$(NEWLIB_FLAGS) && \
 	$(MAKE) install
 

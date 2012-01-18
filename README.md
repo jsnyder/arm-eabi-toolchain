@@ -46,9 +46,11 @@ Requirements (Ubuntu)
 These instructions should now also work on Ubuntu Linux, provided the
 following packages have been installed prior to attempting the build:
 
-> sudo apt-get install curl flex bison libgmp3-dev libmpfr-dev
-  libelf-dev autoconf build-essential libncurses5-dev libmpc-dev
+```bash
+sudo apt-get install curl flex bison libgmp3-dev libmpfr-dev \
+  libelf-dev autoconf build-essential libncurses5-dev libmpc-dev \
   texinfo
+```
 
 
 Main Build Instructions

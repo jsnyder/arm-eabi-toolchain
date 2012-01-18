@@ -4,12 +4,12 @@ PREFIX ?= $(HOME)/arm-cs-tools/
 PROCS ?= 4
 GIT_REV	= $(shell git rev-parse --verify HEAD --short)
 
-CS_BASE		?= 2011.03
-CS_REV 		?= 42
-GCC_VERSION 	?= 4.5
+CS_BASE		?= 2011.09
+CS_REV 		?= 69
+GCC_VERSION 	?= 4.6
 MPC_VERSION 	?= 0.8.1
-SOURCE_PACKAGE	?= 8733
-BIN_PACKAGE	?= 8734
+SOURCE_PACKAGE	?= 9739
+BIN_PACKAGE	?= 9740
 
 CS_VERSION 	= $(CS_BASE)-$(CS_REV)
 
@@ -19,13 +19,13 @@ LOCAL_BIN 	= $(LOCAL_BASE)-i686-pc-linux-gnu.tar.bz2
 SOURCE_URL 	= http://sourcery.mentor.com/sgpp/lite/arm/portal/package$(SOURCE_PACKAGE)/public/arm-none-eabi/$(LOCAL_SOURCE)
 BIN_URL 	= http://sourcery.mentor.com/sgpp/lite/arm/portal/package$(BIN_PACKAGE)/public/arm-none-eabi/$(LOCAL_BIN)
 
-SOURCE_MD5_CHCKSUM ?= 7c302162ec813d039b8388bd7d2b4176
-BIN_MD5_CHECKSUM ?= b1bd1dcb1f922d815ba7fa8d0e6fcd37
+SOURCE_MD5_CHCKSUM ?= ebe25afa276211d0e88b7ff0d03c5345
+BIN_MD5_CHECKSUM ?= 2f2d73429ce70dfb848d7b44b3d24d3f
 
 BUG_URL ?= https://github.com/jsnyder/arm-eabi-toolchain
 PKG_VERSION ?= "ARM EABI 32-bit GNU Toolchain-CS-$(CS_BASE)-$(CS_REV)-$(GIT_REV)"
 
-install-cross: cross-binutils cross-gcc cross-g++ cross-newlib cross-gdb
+install-cross: cross-binutils cross-gcc cross-newlib cross-gdb
 install-deps: gmp mpfr mpc
 
 sudomode:
@@ -153,35 +153,42 @@ cross-binutils: binutils-$(CS_BASE)
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-host install-target
 
-cross-gcc: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
-	mkdir -p build/gcc && cd build/gcc && \
+CS_SPECS="'--with-specs=%{save-temps: -fverbose-asm}		\
+-D__CS_SOURCERYGXX_MAJ__=2011 -D__CS_SOURCERYGXX_MIN__=9	\
+-D__CS_SOURCERYGXX_REV__=69 %{O2:%{!fno-remove-local-statics:	\
+-fremove-local-statics}}					\
+%{O*:%{O|O0|O1|O2|Os:;:%{!fno-remove-local-statics:		\
+-fremove-local-statics}}}'"
+
+cross-gcc-first: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
+	mkdir -p build/gcc-first && cd build/gcc-first && \
 	pushd ../../gcc-$(GCC_VERSION)-$(CS_BASE) ; \
 	make clean ; \
 	popd ; \
 	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure			\
 	--prefix=$(PREFIX) --with-pkgversion=$(PKG_VERSION)		\
 	--with-bugurl=$(BUG_URL) --target=$(TARGET) $(DEPENDENCIES)	\
-	--enable-languages="c" --with-gnu-ld --with-gnu-as		\
-	--with-newlib --disable-nls --disable-libssp --with-newlib	\
-	--without-headers --disable-shared --disable-threads		\
-	--disable-libmudflap --disable-libgomp				\
+	--disable-libquadmath --enable-languages="c" --with-gnu-ld	\
+	--with-gnu-as --with-newlib --disable-nls --disable-libssp	\
+	--with-newlib --without-headers --disable-shared		\
+	--disable-threads --disable-libmudflap --disable-libgomp	\
 	--disable-libstdcxx-pch --disable-libunwind-exceptions		\
-	--disable-libffi --enable-extra-sgxxlite-multilibs && \
+	--disable-libffi --enable-extra-sgxxlite-multilibs $(CS_SPECS) && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
 	$(MAKE) -C gcc install-common install-cpp install- install-driver install-headers
 
-cross-g++: cross-binutils cross-gcc cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
-	mkdir -p build/g++ && cd build/g++ && \
+cross-gcc: cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
+	mkdir -p build/gcc-final && cd build/gcc-final && \
 	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure			\
 	--prefix=$(PREFIX) --with-pkgversion=$(PKG_VERSION)		\
 	--with-bugurl=$(BUG_URL) --target=$(TARGET) $(DEPENDENCIES)	\
-	--enable-languages="c++" --with-gnu-ld --with-gnu-as		\
+	--enable-languages="c,c++" --with-gnu-ld --with-gnu-as		\
 	--with-newlib --disable-nls --disable-libssp --with-newlib	\
-	--without-headers --disable-shared --disable-threads		\
+	--disable-shared --disable-threads --with-headers=yes		\
 	--disable-libmudflap --disable-libgomp				\
-	--disable-libstdcxx-pch --disable-libunwind-exceptions		\
-	--disable-libffi --enable-extra-sgxxlite-multilibs && \
+	--disable-libstdcxx-pch --disable-libffi			\
+	--enable-extra-sgxxlite-multilibs $(CS_SPECS) && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
 	$(MAKE) -C gcc install-common install-cpp install- install-driver install-headers
@@ -190,7 +197,7 @@ NEWLIB_FLAGS="-ffunction-sections -fdata-sections			\
 -DPREFER_SIZE_OVER_SPEED -D__OPTIMIZE_SIZE__ -Os -fomit-frame-pointer	\
 -fno-unroll-loops -D__BUFSIZ__=256 -mabi=aapcs"
 
-cross-newlib: cross-binutils cross-gcc newlib-$(CS_BASE)
+cross-newlib: cross-binutils cross-gcc-first newlib-$(CS_BASE)
 	mkdir -p build/newlib && cd build/newlib && \
 	pushd ../../newlib-$(CS_BASE) ; \
 	make clean ; \

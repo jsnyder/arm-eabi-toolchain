@@ -2,7 +2,7 @@ SHELL = /bin/bash
 TARGET = arm-none-eabi
 PREFIX ?= $(HOME)/arm-cs-tools/
 PROCS ?= 4
-GIT_REV	= $(shell git rev-parse --verify HEAD --short)
+
 
 CS_BASE		?= 2011.09
 CS_REV 		?= 69
@@ -25,13 +25,25 @@ BIN_URL 	= http://sourcery.mentor.com/sgpp/lite/arm/portal/package$(BIN_PACKAGE)
 SOURCE_MD5_CHCKSUM ?= ebe25afa276211d0e88b7ff0d03c5345
 BIN_MD5_CHECKSUM ?= 2f2d73429ce70dfb848d7b44b3d24d3f
 
-BUG_URL ?= https://github.com/jsnyder/arm-eabi-toolchain
-PKG_VERSION ?= "ARM EABI 32-bit GNU Toolchain-CS-$(CS_BASE)-$(CS_REV)-$(GIT_REV)"
+
+
+BUILD_ID	= $(shell git describe --always)
+TODAY           = $(shell date "+%Y%m%d")
+
+ifeq ($(strip $(BUILD_ID)),)
+BUILD_ID = $(TODAY)
+endif
 
 
 ifeq ($(MATCH_CS),true)
 NEWLIB_FLAGS?="-g -O2 -fno-unroll-loops"
+PKG_TAG?="CS"
+else
+PKG_TAG?="JBS"
 endif
+
+BUG_URL ?= https://github.com/jsnyder/arm-eabi-toolchain
+PKG_VERSION ?= "32-bit ARM EABI Toolchain $(PKG_TAG)-$(CS_BASE)-$(CS_REV)-$(BUILD_ID)"
 
 install-cross: cross-binutils cross-gcc cross-newlib cross-gdb
 install-deps: gmp mpfr mpc

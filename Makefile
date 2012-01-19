@@ -1,8 +1,36 @@
-SHELL = /bin/bash
-TARGET = arm-none-eabi
-PREFIX ?= $(HOME)/arm-cs-tools/
-PROCS ?= 4
+# ARM EABI Toolchain Makefile
+#
+# Copyright (C) 2012 by James Snyder <jbsnyder@fanplastic.org>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
 
+#### HIGH LEVEL BUILD CONFIG OPTIONS  #####
+
+SHELL   = /bin/bash
+TARGET  = arm-none-eabi
+PREFIX ?= $(HOME)/arm-cs-tools/
+PROCS  ?= 4
+
+MATCH_CS ?= false
+OPT_NEWLIB_SIZE ?= true
+
+####    PRIMARY TOOLCHAIN VERSIONS    #####
 
 CS_BASE		?= 2011.09
 CS_REV 		?= 69
@@ -11,8 +39,8 @@ MPC_VERSION 	?= 0.8.1
 SOURCE_PACKAGE	?= 9739
 BIN_PACKAGE	?= 9740
 
-MATCH_CS ?= false
-OPT_NEWLIB_SIZE ?= true
+
+####  PRIMARY TOOLCHAIN URLS / FILES  #####
 
 CS_VERSION 	= $(CS_BASE)-$(CS_REV)
 
@@ -22,11 +50,11 @@ LOCAL_BIN 	= $(LOCAL_BASE)-i686-pc-linux-gnu.tar.bz2
 SOURCE_URL 	= http://sourcery.mentor.com/sgpp/lite/arm/portal/package$(SOURCE_PACKAGE)/public/arm-none-eabi/$(LOCAL_SOURCE)
 BIN_URL 	= http://sourcery.mentor.com/sgpp/lite/arm/portal/package$(BIN_PACKAGE)/public/arm-none-eabi/$(LOCAL_BIN)
 
-SOURCE_MD5_CHCKSUM ?= ebe25afa276211d0e88b7ff0d03c5345
+SOURCE_MD5_CHCKSUM = ebe25afa276211d0e88b7ff0d03c5345
 BIN_MD5_CHECKSUM ?= 2f2d73429ce70dfb848d7b44b3d24d3f
 
 
-
+####    BUILD LABELING / TAGGING      #####
 BUILD_ID	= $(shell git describe --always)
 TODAY           = $(shell date "+%Y%m%d")
 
@@ -44,6 +72,9 @@ endif
 
 BUG_URL ?= https://github.com/jsnyder/arm-eabi-toolchain
 PKG_VERSION ?= "32-bit ARM EABI Toolchain $(PKG_TAG)-$(CS_BASE)-$(CS_REV)-$(BUILD_ID)"
+
+
+############### BUILD RULES ###############
 
 install-cross: cross-binutils cross-gcc cross-newlib cross-gdb
 install-deps: gmp mpfr mpc
@@ -71,13 +102,13 @@ endif
 
 downloadbin: $(LOCAL_BIN)
 	@(t1=`openssl md5 $(LOCAL_BIN) | cut -f 2 -d " " -` && \
-	test $$t1=$(BIN_MD5_CHECKSUM) || \
-	echo "Bad Checksum! Please remove the following file and retry:\n$(LOCAL_BIN)")
+	[ "$$t1" = "$(BIN_MD5_CHECKSUM)" ] || \
+	( echo "Bad Checksum! Please remove the following file and retry: $(LOCAL_BIN)" && false ))
 
 downloadsrc: $(LOCAL_SOURCE)
 	@(t1=`openssl md5 $(LOCAL_SOURCE) | cut -f 2 -d " " -` && \
-	test $$t1=$(SOURCE_MD5_CHECKSUM) || \
-	echo "Bad Checksum! Please remove the following file and retry:\n$(LOCAL_SOURCE)")
+	[ "$$t1" = "$(SOURCE_MD5_CHCKSUM)" ] || \
+	( echo "Bad Checksum! Please remove the following file and retry: $(LOCAL_SOURCE)" && false ))
 
 $(LOCAL_BASE)/%-$(CS_VERSION).tar.bz2 : downloadsrc
 ifeq ($(USER),root)

@@ -47,9 +47,8 @@ These instructions should now also work on Ubuntu Linux, provided the
 following packages have been installed prior to attempting the build:
 
 ```bash
-sudo apt-get install curl flex bison libgmp3-dev libmpfr-dev \
-  libelf-dev autoconf build-essential libncurses5-dev libmpc-dev \
-  texinfo
+sudo apt-get install curl flex bison libgmp3-dev libmpfr-dev texinfo \
+      libelf-dev autoconf build-essential libncurses5-dev libmpc-dev \
 ```
 
 
@@ -91,6 +90,7 @@ PROCS=8 make install-cross
 
 ```bash
 CC=clang make cross-binutils cross-gcc cross-newlib
+
 make cross-gdb
 ```
 

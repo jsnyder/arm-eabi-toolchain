@@ -20,12 +20,20 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-#### HIGH LEVEL BUILD CONFIG OPTIONS  #####
+#### HIGH LEVEL/SYSTEM CONFIG OPTIONS #####
 
 SHELL   = /bin/bash
+UNAME := $(shell uname)
 TARGET  = arm-none-eabi
 PREFIX ?= $(HOME)/arm-cs-tools/
-PROCS  ?= 4
+
+ifeq ($(UNAME), Linux)
+PROCS ?= $(shell grep -c ^processor /proc/cpuinfo)
+else ifeq ($(UNAME), Darwin)
+PROCS ?= $(shell sysctl hw.ncpu | awk '{print $$2}')
+else
+PROCS ?= 2
+endif
 
 MATCH_CS ?= false
 OPT_NEWLIB_SIZE ?= true

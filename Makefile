@@ -50,7 +50,7 @@ LOCAL_BIN 	= $(LOCAL_BASE)-i686-pc-linux-gnu.tar.bz2
 SOURCE_URL 	= http://sourcery.mentor.com/sgpp/lite/arm/portal/package$(SOURCE_PACKAGE)/public/arm-none-eabi/$(LOCAL_SOURCE)
 BIN_URL 	= http://sourcery.mentor.com/sgpp/lite/arm/portal/package$(BIN_PACKAGE)/public/arm-none-eabi/$(LOCAL_BIN)
 
-SOURCE_MD5_CHCKSUM = ebe25afa276211d0e88b7ff0d03c5345
+SOURCE_MD5_CHCKSUM ?= ebe25afa276211d0e88b7ff0d03c5345
 BIN_MD5_CHECKSUM ?= 2f2d73429ce70dfb848d7b44b3d24d3f
 
 

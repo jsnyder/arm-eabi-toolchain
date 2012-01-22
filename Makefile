@@ -25,7 +25,7 @@
 SHELL   = /bin/bash
 UNAME  := $(shell uname)
 TARGET  = arm-none-eabi
-PREFIX ?= $(HOME)/arm-cs-tools/
+PREFIX ?= $(HOME)/arm-cs-tools
 
 ifeq ($(UNAME), Linux)
 PROCS  ?= $(shell grep -c ^processor /proc/cpuinfo)
@@ -235,7 +235,6 @@ cross-gcc-first: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
 	--disable-libstdcxx-pch --disable-libunwind-exceptions		\
 	--disable-decimal-float --enable-poison-system-directories 	\
 	--with-sysroot="$(PREFIX)/$(TARGET)"				\
-	--with-build-sysroot="$(PREFIX)/$(TARGET)"			\
 	--with-build-time-tools="$(PREFIX)/$(TARGET)/bin"		\
 	--disable-libffi --enable-extra-sgxxlite-multilibs $(CS_SPECS) && \
 	$(MAKE) -j$(PROCS) && \
@@ -244,6 +243,7 @@ cross-gcc-first: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
 
 cross-gcc: cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
 	mkdir -p build/gcc-final && cd build/gcc-final && \
+	mkdir -p $(PREFIX)/$(TARGET)/usr/include && \
 	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure			\
 	--prefix=$(PREFIX) --with-pkgversion=$(PKG_VERSION)		\
 	--with-bugurl=$(BUG_URL) --target=$(TARGET) $(DEPENDENCIES)	\
@@ -253,7 +253,6 @@ cross-gcc: cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VERSION)-$(CS_B
 	--disable-libmudflap --disable-libgomp	 --enable-lto		\
 	--disable-libstdcxx-pch	--enable-poison-system-directories 	\
 	--with-sysroot="$(PREFIX)/$(TARGET)"				\
-	--with-build-sysroot="$(PREFIX)/$(TARGET)"			\
 	--with-build-time-tools="$(PREFIX)/$(TARGET)/bin"		\
 	--enable-extra-sgxxlite-multilibs $(CS_SPECS) && \
 	$(MAKE) -j$(PROCS) && \

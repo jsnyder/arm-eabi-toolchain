@@ -244,8 +244,8 @@ cross-gcc: cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VERSION)-$(CS_B
 	--prefix=$(PREFIX) --with-pkgversion=$(PKG_VERSION)		\
 	--with-bugurl=$(BUG_URL) --target=$(TARGET) $(DEPENDENCIES)	\
 	--enable-languages="c,c++" --with-gnu-ld --with-gnu-as		\
-	--with-newlib --disable-nls --disable-libss	\
-	--disable-shared --disable-threads --with-headers=yes		\
+	--with-newlib --disable-nls --disable-libssp			\
+	--disable-shared --enable-threads --with-headers=yes		\
 	--disable-libmudflap --disable-libgomp	 --enable-lto		\
 	--disable-libstdcxx-pch			\
 	--enable-extra-sgxxlite-multilibs $(CS_SPECS) && \

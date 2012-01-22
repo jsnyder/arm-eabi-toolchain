@@ -208,7 +208,8 @@ cross-binutils: binutils-$(CS_BASE)
 	popd ; \
 	../../binutils-$(CS_BASE)/configure --prefix=$(PREFIX)		\
 	--target=$(TARGET) --with-pkgversion=$(PKG_VERSION)		\
-	--with-bugurl=$(BUG_URL) --disable-nls --disable-werror && \
+	--with-sysroot="$(PREFIX)/$(TARGET)" --with-bugurl=$(BUG_URL)	\
+	--disable-nls --disable-werror && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-host install-target
 
@@ -232,7 +233,10 @@ cross-gcc-first: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
 	--with-newlib --without-headers --disable-shared --enable-lto	\
 	--disable-threads --disable-libmudflap --disable-libgomp	\
 	--disable-libstdcxx-pch --disable-libunwind-exceptions		\
-	--disable-decimal-float \
+	--disable-decimal-float --enable-poison-system-directories 	\
+	--with-sysroot="$(PREFIX)/$(TARGET)"				\
+	--with-build-sysroot="$(PREFIX)/$(TARGET)"			\
+	--with-build-time-tools="$(PREFIX)/$(TARGET)/bin"		\
 	--disable-libffi --enable-extra-sgxxlite-multilibs $(CS_SPECS) && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
@@ -247,7 +251,10 @@ cross-gcc: cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VERSION)-$(CS_B
 	--with-newlib --disable-nls --disable-libssp			\
 	--disable-shared --enable-threads --with-headers=yes		\
 	--disable-libmudflap --disable-libgomp	 --enable-lto		\
-	--disable-libstdcxx-pch			\
+	--disable-libstdcxx-pch	--enable-poison-system-directories 	\
+	--with-sysroot="$(PREFIX)/$(TARGET)"				\
+	--with-build-sysroot="$(PREFIX)/$(TARGET)"			\
+	--with-build-time-tools="$(PREFIX)/$(TARGET)/bin"		\
 	--enable-extra-sgxxlite-multilibs $(CS_SPECS) && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \

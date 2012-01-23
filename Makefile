@@ -41,7 +41,9 @@ OPT_NEWLIB_SIZE ?= true
 
 ####    PRIMARY TOOLCHAIN VERSIONS    #####
 
-CS_BASE		?= 2011.09
+CS_MAJ		?= 2011
+CS_MIN		?= 09
+CS_BASE		?= $(CS_MAJ).$(CS_MIN)
 CS_REV 		?= 69
 GCC_VERSION 	?= 4.6
 MPC_VERSION 	?= 0.8.1
@@ -214,11 +216,11 @@ cross-binutils: binutils-$(CS_BASE)
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-host install-target
 
-CS_SPECS='--with-specs=%{save-temps: -fverbose-asm}		\
--D__CS_SOURCERYGXX_MAJ__=2011 -D__CS_SOURCERYGXX_MIN__=9	\
--D__CS_SOURCERYGXX_REV__=69 %{O2:%{!fno-remove-local-statics:	\
--fremove-local-statics}}					\
-%{O*:%{O|O0|O1|O2|Os:;:%{!fno-remove-local-statics:		\
+CS_SPECS='--with-specs=%{save-temps: -fverbose-asm}			\
+-D__CS_SOURCERYGXX_MAJ__=$(CS_MAJ) -D__CS_SOURCERYGXX_MIN__=$(CS_MIN)	\
+-D__CS_SOURCERYGXX_REV__=$(CS_REV) %{O2:%{!fno-remove-local-statics:	\
+-fremove-local-statics}}						\
+%{O*:%{O|O0|O1|O2|Os:;:%{!fno-remove-local-statics:			\
 -fremove-local-statics}}}'
 
 cross-gcc-first: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash

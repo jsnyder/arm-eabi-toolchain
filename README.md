@@ -55,14 +55,6 @@ sudo apt-get install curl flex bison libgmp3-dev libmpfr-dev texinfo \
 Main Build Instructions
 -----------------------
 
-Next prep for building the main toolchain:
-
-```bash
-mkdir -p $HOME/arm-cs-tools/bin
-
-export PATH=$HOME/arm-cs-tools/bin:$PATH
-```
-
 Next build the toolchain:
 
 ```bash

@@ -76,17 +76,20 @@ by building using the following type of invokation:
 PREFIX=$HOME/arm-cs-tools make install-cross
 ```
 
-By default the build attempts to use up to 4 parallel tasks, you can
-adjust this behavior by redefining PROCS:
+By default the build attempts to determine the number of CPUs and sets
+the number of parallel jobs automatically (Linux & OS X). If you're on
+another platform or want to use a different number of jobs, you can
+redefine PROCS:
 
 ```bash
 PROCS=8 make install-cross
 ```
 
 *NOTE:* If you are on Mac OS X and are running XCode 4.1 or a similar
- version you may find that it will fail during the build of libgcc as
- discussed in issue #10.  To work around this, build using using these
- two commands instead of the above:
+ version and are trying to build 2011.03 or an earlier version of
+ CodeSourcery's sources, you may find that it will fail during the
+ build of libgcc as discussed in issue #10.  To work around this,
+ build using using these two commands instead of the above:
 
 ```bash
 CC=clang make cross-binutils cross-gcc cross-newlib
@@ -94,7 +97,7 @@ CC=clang make cross-binutils cross-gcc cross-newlib
 make cross-gdb
 ```
 
-or you can build the entire toolchain with gcc-4.2:
+or with gcc-4.2:
 
 ```bash
 CC=gcc-4.2 make install-cross
@@ -149,20 +152,20 @@ hand-coded assembler that compiles to sizes larger than a simple C
 implementation.
 
 
-If you want the standard options that CodeSourcery uses when building
-Newlib, which are as follows:
-
-```bash
-CFLAGS_FOR_TARGET="-g -O2 -fno-unroll-loops"
-```
-
-Simply prepend the make command as follows:
+If you want something closer to standard options that CodeSourcery
+uses simply prepend the make command as follows:
 
 ```bash
 MATCH_CS=false make install-cross
 ```
 
-or define your own Newlib flags:
+For Newlib this changes the flags to these:
+
+```bash
+CFLAGS_FOR_TARGET="-g -O2 -fno-unroll-loops"
+```
+
+You can also define your own Newlib flags:
 
 ```bash
 NEWLIB_FLAGS="-g -O2 -fno-unroll-loops" make install-cross

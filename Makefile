@@ -26,6 +26,7 @@ SHELL   = /bin/bash
 UNAME  := $(shell uname)
 TARGET  = arm-none-eabi
 PREFIX ?= $(HOME)/arm-cs-tools
+PATH   := ${PREFIX}/bin:${PATH}
 
 ifeq ($(UNAME), Linux)
 PROCS  ?= $(shell grep -c ^processor /proc/cpuinfo)
@@ -277,6 +278,7 @@ cross-newlib: cross-binutils cross-gcc-first newlib-$(CS_BASE)
 	../../newlib-$(CS_BASE)/configure --prefix=$(PREFIX)	\
 	--target=$(TARGET) --disable-newlib-supplied-syscalls	\
 	--disable-libgloss --disable-nls	\
+	--with-build-time-tools="$(PREFIX)/bin"       \
 	--enable-newlib-io-long-long --enable-newlib-register-fini && \
 	$(MAKE) -j$(PROCS) CFLAGS_FOR_TARGET=$(NEWLIB_FLAGS) CCASFLAGS=$(NEWLIB_FLAGS) && \
 	$(MAKE) install

@@ -87,7 +87,12 @@ PKG_VERSION ?= "32-bit ARM EABI Toolchain $(PKG_TAG)-$(CS_BASE)-$(CS_REV)-$(BUIL
 
 ############### BUILD RULES ###############
 
-install-cross: cross-binutils cross-gcc cross-newlib cross-gdb
+.PHONY: install-tools
+install-tools: cross-binutils cross-gcc cross-newlib cross-gdb
+
+.PHONY: install-cross
+install-cross: install-tools install-note
+
 install-deps: gmp mpfr mpc
 
 sudomode:
@@ -96,6 +101,17 @@ ifneq ($(USER),root)
 	@echo e.g.: sudo make targetname
 	@exit 1
 endif
+
+.PHONY: install-note
+install-note: install-tools
+	@echo
+	@echo ====== INSTALLATION NOTE ======
+	@echo Your tools have now been installed at the following prefix:
+	@echo $(PREFIX)
+	@echo
+	@echo Please be sure to add something similar to the following to your .bash_profile, .zshrc, etc:
+	@echo export PATH=$(PREFIX)/bin:'$$PATH'
+	@echo
 
 $(LOCAL_SOURCE):
 ifeq ($(USER),root)

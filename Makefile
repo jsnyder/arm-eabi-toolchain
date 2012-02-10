@@ -87,6 +87,8 @@ PKG_VERSION ?= "32-bit ARM EABI Toolchain $(PKG_TAG)-$(CS_BASE)-$(CS_REV)-$(BUIL
 
 ############### BUILD RULES ###############
 
+default: install-cross
+
 .PHONY: install-tools
 install-tools: cross-binutils cross-gcc cross-newlib cross-gdb
 

@@ -148,7 +148,7 @@ If you want something closer to standard options that CodeSourcery
 uses simply prepend the make command as follows:
 
 ```bash
-MATCH_CS=false make install-cross
+MATCH_CS=true make install-cross
 ```
 
 For Newlib this changes the flags to these:

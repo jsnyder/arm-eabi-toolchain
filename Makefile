@@ -257,7 +257,7 @@ cross-gcc-first: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
 	--disable-decimal-float --enable-poison-system-directories 	\
 	--with-sysroot="$(PREFIX)/$(TARGET)"				\
 	--with-build-time-tools="$(PREFIX)/$(TARGET)/bin"		\
-	--disable-libffi --enable-extra-sgxxlite-multilibs $(CS_SPECS) && \
+	--disable-libffi --enable-extra-sgxx-multilibs $(CS_SPECS) && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
 	$(MAKE) install-gcc
@@ -275,7 +275,7 @@ cross-gcc: cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VERSION)-$(CS_B
 	--disable-libstdcxx-pch	--enable-poison-system-directories 	\
 	--with-sysroot="$(PREFIX)/$(TARGET)"				\
 	--with-build-time-tools="$(PREFIX)/$(TARGET)/bin"		\
-	--enable-extra-sgxxlite-multilibs $(CS_SPECS) && \
+	--enable-extra-sgxx-multilibs $(CS_SPECS) && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
 	$(MAKE) install-gcc

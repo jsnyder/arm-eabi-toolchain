@@ -173,6 +173,11 @@ multilibbash: gcc-$(GCC_VERSION)-$(CS_BASE)
 	patch -N -p0 < ../patches/gcc-multilib-bash.patch ; \
 	popd ;
 
+newvpatch: gcc-$(GCC_VERSION)-$(CS_BASE)
+	pushd gcc-$(GCC_VERSION)-$(CS_BASE) ; \
+	patch -N -p0 < ../patches/gcc-out-of-scope-newv.patch ; \
+	popd ;
+
 gcc-$(GCC_VERSION)-$(CS_BASE) : $(LOCAL_BASE)/gcc-$(CS_VERSION).tar.bz2
 ifeq ($(USER),root)
 	sudo -u $(SUDO_USER) tar -jxf $<
@@ -241,7 +246,7 @@ CS_SPECS='--with-specs=%{save-temps: -fverbose-asm}			\
 %{O*:%{O|O0|O1|O2|Os:;:%{!fno-remove-local-statics:			\
 -fremove-local-statics}}}'
 
-cross-gcc-first: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
+cross-gcc-first: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash newvpatch
 	mkdir -p build/gcc-first && cd build/gcc-first && \
 	pushd ../../gcc-$(GCC_VERSION)-$(CS_BASE) ; \
 	make clean ; \
@@ -262,7 +267,7 @@ cross-gcc-first: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
 	$(MAKE) installdirs install-target && \
 	$(MAKE) install-gcc
 
-cross-gcc: cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
+cross-gcc: cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash newvpatch
 	mkdir -p build/gcc-final && cd build/gcc-final && \
 	mkdir -p $(PREFIX)/$(TARGET)/usr/include && \
 	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure			\

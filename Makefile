@@ -169,13 +169,13 @@ else
 endif
 
 multilibbash: gcc-$(GCC_VERSION)-$(CS_BASE)
-	pushd gcc-$(GCC_VERSION)-$(CS_BASE) ; \
-	patch -N -p0 < ../patches/gcc-multilib-bash.patch ; \
+	pushd gcc-$(GCC_VERSION)-$(CS_BASE) && \
+	patch -N -p0 < ../patches/gcc-multilib-bash.patch && \
 	popd ;
 
 newvpatch: gcc-$(GCC_VERSION)-$(CS_BASE)
-	pushd gcc-$(GCC_VERSION)-$(CS_BASE) ; \
-	patch -N -p0 < ../patches/gcc-out-of-scope-newv.patch ; \
+	pushd gcc-$(GCC_VERSION)-$(CS_BASE) && \
+	patch -N -p0 < ../patches/gcc-out-of-scope-newv.patch && \
 	popd ;
 
 gcc-$(GCC_VERSION)-$(CS_BASE) : $(LOCAL_BASE)/gcc-$(CS_VERSION).tar.bz2

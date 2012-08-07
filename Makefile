@@ -41,15 +41,15 @@ OPT_NEWLIB_SIZE ?= true
 
 ####    PRIMARY TOOLCHAIN VERSIONS    #####
 
-CS_MAJ		?= 2011
-CS_MIN		?= 09
+CS_MAJ		?= 2012
+CS_MIN		?= 03
 CS_BASE		?= $(CS_MAJ).$(CS_MIN)
-CS_REV 		?= 69
+CS_REV 		?= 56
 GCC_VERSION 	?= 4.6
 MPC_VERSION 	?= 0.8.1
-SOURCE_PACKAGE	?= 9739
-BIN_PACKAGE	?= 9740
-
+SOURCE_PACKAGE	?= 10384
+BIN_PACKAGE	?= 10385
+## https://sourcery.mentor.com/GNUToolchain/package10384/public/arm-none-eabi/arm-2012.03-56-arm-none-eabi.src.tar.bz2
 
 ####  PRIMARY TOOLCHAIN URLS / FILES  #####
 
@@ -61,8 +61,8 @@ LOCAL_BIN 	= $(LOCAL_BASE)-i686-pc-linux-gnu.tar.bz2
 SOURCE_URL 	= http://sourcery.mentor.com/sgpp/lite/arm/portal/package$(SOURCE_PACKAGE)/public/arm-none-eabi/$(LOCAL_SOURCE)
 BIN_URL 	= http://sourcery.mentor.com/sgpp/lite/arm/portal/package$(BIN_PACKAGE)/public/arm-none-eabi/$(LOCAL_BIN)
 
-SOURCE_MD5_CHCKSUM ?= ebe25afa276211d0e88b7ff0d03c5345
-BIN_MD5_CHECKSUM ?= 2f2d73429ce70dfb848d7b44b3d24d3f
+SOURCE_MD5_CHCKSUM ?= 14d65b1caa956de8d5a64c9c99c8b81e
+BIN_MD5_CHECKSUM ?= f2fcb35a9e09b0f96e058a0176c80444
 
 
 ####    BUILD LABELING / TAGGING      #####
@@ -173,11 +173,6 @@ multilibbash: gcc-$(GCC_VERSION)-$(CS_BASE)
 	patch -N -p0 < ../patches/gcc-multilib-bash.patch && \
 	popd ;
 
-newvpatch: gcc-$(GCC_VERSION)-$(CS_BASE)
-	pushd gcc-$(GCC_VERSION)-$(CS_BASE) && \
-	patch -N -p0 < ../patches/gcc-out-of-scope-newv.patch && \
-	popd ;
-
 gcc-$(GCC_VERSION)-$(CS_BASE) : $(LOCAL_BASE)/gcc-$(CS_VERSION).tar.bz2
 ifeq ($(USER),root)
 	sudo -u $(SUDO_USER) tar -jxf $<
@@ -246,7 +241,7 @@ CS_SPECS='--with-specs=%{save-temps: -fverbose-asm}			\
 %{O*:%{O|O0|O1|O2|Os:;:%{!fno-remove-local-statics:			\
 -fremove-local-statics}}}'
 
-cross-gcc-first: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash newvpatch
+cross-gcc-first: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash 
 	mkdir -p build/gcc-first && cd build/gcc-first && \
 	pushd ../../gcc-$(GCC_VERSION)-$(CS_BASE) ; \
 	make clean ; \
@@ -267,7 +262,7 @@ cross-gcc-first: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash newvp
 	$(MAKE) installdirs install-target && \
 	$(MAKE) install-gcc
 
-cross-gcc: cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash newvpatch
+cross-gcc: cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash 
 	mkdir -p build/gcc-final && cd build/gcc-final && \
 	mkdir -p $(PREFIX)/$(TARGET)/usr/include && \
 	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure			\

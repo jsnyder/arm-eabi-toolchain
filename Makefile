@@ -66,7 +66,7 @@ BIN_MD5_CHECKSUM ?= f2fcb35a9e09b0f96e058a0176c80444
 
 
 ####    BUILD LABELING / TAGGING      #####
-BUILD_ID	= $(shell git describe --always)
+BUILD_ID   ?= $(shell git describe --always)
 TODAY           = $(shell date "+%Y%m%d")
 
 ifeq ($(strip $(BUILD_ID)),)

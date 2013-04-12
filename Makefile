@@ -42,13 +42,13 @@ OPT_NEWLIB_SIZE ?= true
 ####    PRIMARY TOOLCHAIN VERSIONS    #####
 
 CS_MAJ		?= 2012
-CS_MIN		?= 03
+CS_MIN		?= 09
 CS_BASE		?= $(CS_MAJ).$(CS_MIN)
-CS_REV 		?= 56
-GCC_VERSION 	?= 4.6
+CS_REV 		?= 63
+GCC_VERSION 	?= 4.7
 MPC_VERSION 	?= 0.8.1
-SOURCE_PACKAGE	?= 10384
-BIN_PACKAGE	?= 10385
+SOURCE_PACKAGE	?= 10925
+BIN_PACKAGE	?= 10926
 ## https://sourcery.mentor.com/GNUToolchain/package10384/public/arm-none-eabi/arm-2012.03-56-arm-none-eabi.src.tar.bz2
 
 ####  PRIMARY TOOLCHAIN URLS / FILES  #####
@@ -61,8 +61,8 @@ LOCAL_BIN 	= $(LOCAL_BASE)-i686-pc-linux-gnu.tar.bz2
 SOURCE_URL 	= http://sourcery.mentor.com/sgpp/lite/arm/portal/package$(SOURCE_PACKAGE)/public/arm-none-eabi/$(LOCAL_SOURCE)
 BIN_URL 	= http://sourcery.mentor.com/sgpp/lite/arm/portal/package$(BIN_PACKAGE)/public/arm-none-eabi/$(LOCAL_BIN)
 
-SOURCE_MD5_CHCKSUM ?= 14d65b1caa956de8d5a64c9c99c8b81e
-BIN_MD5_CHECKSUM ?= f2fcb35a9e09b0f96e058a0176c80444
+SOURCE_MD5_CHCKSUM ?= b3671f2536f8db94ade739927e01a2c7
+BIN_MD5_CHECKSUM ?= d094880c6ac3aea16d4bfb88077186f7
 
 
 ####    BUILD LABELING / TAGGING      #####

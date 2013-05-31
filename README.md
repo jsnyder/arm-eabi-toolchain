@@ -61,8 +61,8 @@ Next build the toolchain:
 make install-cross
 ```
 
-*Note: My most recent test on Mac OS X 10.8 with XCode Command Line Tools from April 2013, it was
-*necessary to use the instructions in the Installing gcc-4.2 section.
+*Note:* My most recent test on Mac OS X 10.8 with XCode Command Line Tools from April 2013, it was
+necessary to use the instructions in the Installing gcc-4.2 section.
 
 You should be able to also specify a specific install/prefix location
 by building using the following type of invokation:
@@ -154,7 +154,9 @@ Homebrew-Dupes also offers a gcc formula which installs, at the time of this wri
 Multilib Build Customization
 ----------------------------
 
-By default, the toolchain will build with the the multilibs included in the binary builds of G++ Lite. If you want to build multilibs for a larger set of targets similar to the commercial release, you can build like this:
+By default, the toolchain will build with the the multilibs included in the binary builds of G++
+Lite. If you want to build multilibs for a larger set of targets similar to the commercial release,
+you can build like this:
 
 ```bash
 FULL_MULTILIBS=true make install-cross

@@ -117,6 +117,30 @@ can clean up the intermediate files with the following command:
 make clean
 ```
 
+Installing gcc-4.2
+------------------
+First things first, see if it is installed. Write `gcc` in your commandline and double tab. If there is no file called gcc-4.2 you most likely do not have it. One more check though is to check the gcc version by doing `gcc -v`. Look at the last line of the output, if it looks like this
+
+```
+gcc version 4.2.1 (Based on Apple Inc. build 5658) (LLVM build 2336.11.00)
+```
+
+you may think you are in luck and you have gcc-4.2. Unfortunately it is not that simple. This is the llvm version of gcc-4.2 from Apple and unfortunately does not work with the latest CodeSourcery packages.
+
+The correct gcc version is easy to install though using homebrew.
+
+```bash
+brew tap homebrew/dupes && brew install apple-gcc42
+```
+
+and then do
+
+```bash
+CC=gcc-4.2 make install-cross
+```
+###Note:
+Homebrew-Dupes also offers a gcc formula which installs, at the time of this writing, GCC 4.7. I have not tried this version myself but might be worth a try since 4.2 is getting pretty dated.
+
 Newlib Build Customization
 --------------------------
 

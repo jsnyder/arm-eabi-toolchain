@@ -38,6 +38,7 @@ endif
 
 MATCH_CS        ?= false
 OPT_NEWLIB_SIZE ?= true
+FULL_MULTILIBS  ?= false
 
 ####    PRIMARY TOOLCHAIN VERSIONS    #####
 
@@ -79,6 +80,12 @@ NEWLIB_FLAGS?="-g -O2 -fno-unroll-loops"
 PKG_TAG?="CS"
 else
 PKG_TAG?="JBS"
+endif
+
+ifeq ($(FULL_MULTILIBS),true)
+MULTILIB_FLAGS?="--enable-extra-sgxx-multilibs"
+else
+MULTILIB_FLAGS?="--enable-extra-sgxxlite-multilibs"
 endif
 
 BUG_URL ?= https://github.com/jsnyder/arm-eabi-toolchain
@@ -257,7 +264,7 @@ cross-gcc-first: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
 	--disable-decimal-float --enable-poison-system-directories 	\
 	--with-sysroot="$(PREFIX)/$(TARGET)"				\
 	--with-build-time-tools="$(PREFIX)/$(TARGET)/bin"		\
-	--disable-libffi --enable-extra-sgxxlite-multilibs $(CS_SPECS) && \
+	--disable-libffi $(MULTILIB_FLAGS) $(CS_SPECS) && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
 	$(MAKE) install-gcc
@@ -275,7 +282,7 @@ cross-gcc: cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VERSION)-$(CS_B
 	--disable-libstdcxx-pch	--enable-poison-system-directories 	\
 	--with-sysroot="$(PREFIX)/$(TARGET)"				\
 	--with-build-time-tools="$(PREFIX)/$(TARGET)/bin"		\
-	--enable-extra-sgxxlite-multilibs $(CS_SPECS) && \
+	$(MULTILIB_FLAGS) $(CS_SPECS) && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
 	$(MAKE) install-gcc

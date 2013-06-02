@@ -42,15 +42,14 @@ FULL_MULTILIBS  ?= false
 
 ####    PRIMARY TOOLCHAIN VERSIONS    #####
 
-CS_MAJ			?= 2012
-CS_MIN			?= 09
+CS_MAJ			?= 2013
+CS_MIN			?= 05
 CS_BASE			?= $(CS_MAJ).$(CS_MIN)
-CS_REV 			?= 63
+CS_REV 			?= 23
 GCC_VERSION 	?= 4.7
 MPC_VERSION 	?= 0.9
-SOURCE_PACKAGE	?= 10925
-BIN_PACKAGE		?= 10936
-## https://sourcery.mentor.com/GNUToolchain/package10384/public/arm-none-eabi/arm-2012.03-56-arm-none-eabi.src.tar.bz2
+SOURCE_PACKAGE	?= 11441
+BIN_PACKAGE		?= 11442
 
 ####  PRIMARY TOOLCHAIN URLS / FILES  #####
 
@@ -62,8 +61,8 @@ LOCAL_BIN 	= $(LOCAL_BASE)-i686-pc-linux-gnu.tar.bz2
 SOURCE_URL 	= https://sourcery.mentor.com/GNUToolchain/package$(SOURCE_PACKAGE)/public/arm-none-eabi/$(LOCAL_SOURCE)
 BIN_URL 	= https://sourcery.mentor.com/GNUToolchain/package$(BIN_PACKAGE)/public/arm-none-eabi/$(LOCAL_BIN)
 
-SOURCE_MD5_CHCKSUM ?= b3671f2536f8db94ade739927e01a2c7
-BIN_MD5_CHECKSUM ?= d094880c6ac3aea16d4bfb88077186f7
+SOURCE_MD5_CHCKSUM ?= 4c791ddbb3d4bcfee29a26eb4db5a244
+BIN_MD5_CHECKSUM ?= 9d206de1c74f9454e468ddcdd72c9c53
 
 
 ####    BUILD LABELING / TAGGING      #####

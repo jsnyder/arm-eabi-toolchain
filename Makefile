@@ -283,7 +283,7 @@ cross-gcc: cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VERSION)-$(CS_B
 
 
 ifeq ($(OPT_NEWLIB_SIZE),true)
-NEWLIB_FLAGS?="-ffunction-sections -fdata-sections			\
+NEWLIB_FLAGS?="-g -ffunction-sections -fdata-sections			\
 -DPREFER_SIZE_OVER_SPEED -D__OPTIMIZE_SIZE__ -Os -fomit-frame-pointer	\
 -fno-unroll-loops -D__BUFSIZ__=256 -mabi=aapcs"
 else
@@ -299,7 +299,8 @@ cross-newlib: cross-binutils cross-gcc-first newlib-$(CS_BASE)
 	--target=$(TARGET) --disable-newlib-supplied-syscalls	\
 	--disable-libgloss --disable-nls	\
 	--with-build-time-tools="$(PREFIX)/bin"       \
-	--enable-newlib-io-long-long --enable-newlib-register-fini && \
+	--enable-newlib-io-long-long --enable-newlib-register-fini \
+	--disable-newlib-io-float && \
 	$(MAKE) -j$(PROCS) CFLAGS_FOR_TARGET=$(NEWLIB_FLAGS) CCASFLAGS=$(NEWLIB_FLAGS) && \
 	$(MAKE) install
 

@@ -84,6 +84,7 @@ endif
 BUG_URL ?= https://github.com/jsnyder/arm-eabi-toolchain
 PKG_VERSION ?= "32-bit ARM EABI Toolchain $(PKG_TAG)-$(CS_BASE)-$(CS_REV)-$(BUILD_ID)"
 
+STATICLIBS := $(CURDIR)/build/libs/
 
 ############### BUILD RULES ###############
 
@@ -195,31 +196,31 @@ else
 	tar -jxf $<
 endif
 
-gmp: gmp-$(CS_BASE) sudomode
-	sudo -u $(SUDO_USER) mkdir -p build/gmp && cd build/gmp ; \
+gmp: gmp-$(CS_BASE)
+	mkdir -p build/gmp && cd build/gmp ; \
 	pushd ../../gmp-$(CS_BASE) ; \
 	make clean ; \
 	popd ; \
-	sudo -u $(SUDO_USER) ../../gmp-$(CS_BASE)/configure --disable-shared && \
-	sudo -u $(SUDO_USER) $(MAKE) -j$(PROCS) all && \
+	../../gmp-$(CS_BASE)/configure --disable-shared --prefix=$(STATICLIBS) && \
+	$(MAKE) -j$(PROCS) all && \
 	$(MAKE) install
 
-mpc: mpc-$(MPC_VERSION) sudomode
-	sudo -u $(SUDO_USER) mkdir -p build/gmp && cd build/gmp ; \
-	pushd ../../mpc-$(MPC_VERSION) ; \
-	make clean ; \
-	popd ; \
-	sudo -u $(SUDO_USER) ../../mpc-$(MPC_VERSION)/configure --disable-shared && \
-	sudo -u $(SUDO_USER) $(MAKE) -j$(PROCS) all && \
-	$(MAKE) install
-
-mpfr: gmp mpfr-$(CS_BASE) sudomode
-	sudo -u $(SUDO_USER) mkdir -p build/mpfr && cd build/mpfr && \
+mpfr: gmp mpfr-$(CS_BASE)
+	mkdir -p build/mpfr && cd build/mpfr && \
 	pushd ../../mpfr-$(CS_BASE) ; \
 	make clean ; \
 	popd ; \
-	sudo -u $(SUDO_USER) ../../mpfr-$(CS_BASE)/configure LDFLAGS="-Wl,-search_paths_first" --disable-shared && \
-	sudo -u $(SUDO_USER) $(MAKE) -j$(PROCS) all && \
+	../../mpfr-$(CS_BASE)/configure LDFLAGS="-Wl,-search_paths_first" --disable-shared --prefix=$(STATICLIBS) --with-gmp=$(STATICLIBS) && \
+	$(MAKE) -j$(PROCS) all && \
+	$(MAKE) install
+
+mpc: mpc-$(MPC_VERSION)
+	mkdir -p build/mpc && cd build/mpc ; \
+	pushd ../../mpc-$(MPC_VERSION) ; \
+	make clean ; \
+	popd ; \
+	../../mpc-$(CS_BASE)/configure --disable-shared --prefix=$(STATICLIBS) --with-mpfr=$(STATICLIBS) --with-gmp=$(STATICLIBS) && \
+	$(MAKE) -j$(PROCS) all && \
 	$(MAKE) install
 
 cross-binutils: binutils-$(CS_BASE)
@@ -241,7 +242,7 @@ CS_SPECS='--with-specs=%{save-temps: -fverbose-asm}			\
 %{O*:%{O|O0|O1|O2|Os:;:%{!fno-remove-local-statics:			\
 -fremove-local-statics}}}'
 
-cross-gcc-first: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash 
+cross-gcc-first: gmp mpfr mpc cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
 	mkdir -p build/gcc-first && cd build/gcc-first && \
 	pushd ../../gcc-$(GCC_VERSION)-$(CS_BASE) ; \
 	make clean ; \
@@ -257,12 +258,13 @@ cross-gcc-first: cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
 	--disable-decimal-float --enable-poison-system-directories 	\
 	--with-sysroot="$(PREFIX)/$(TARGET)"				\
 	--with-build-time-tools="$(PREFIX)/$(TARGET)/bin"		\
-	--disable-libffi --enable-extra-sgxxlite-multilibs $(CS_SPECS) && \
+	--disable-libffi --enable-extra-sgxxlite-multilibs $(CS_SPECS) \
+	--with-gmp=$(STATICLIBS) --with-mpfr=$(STATICLIBS) --with-mpc=$(STATICLIBS) && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
 	$(MAKE) install-gcc
 
-cross-gcc: cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash 
+cross-gcc: gmp mpfr mpc cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
 	mkdir -p build/gcc-final && cd build/gcc-final && \
 	mkdir -p $(PREFIX)/$(TARGET)/usr/include && \
 	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure			\
@@ -275,7 +277,9 @@ cross-gcc: cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VERSION)-$(CS_B
 	--disable-libstdcxx-pch	--enable-poison-system-directories 	\
 	--with-sysroot="$(PREFIX)/$(TARGET)"				\
 	--with-build-time-tools="$(PREFIX)/$(TARGET)/bin"		\
-	--enable-extra-sgxxlite-multilibs $(CS_SPECS) && \
+	--with-gmp=$(PREFIX) --with-mpfr=$(PREFIX) --with-mpc=$(PREFIX) \
+	--enable-extra-sgxxlite-multilibs $(CS_SPECS) \
+	--with-gmp=$(STATICLIBS) --with-mpfr=$(STATICLIBS) --with-mpc=$(STATICLIBS) && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
 	$(MAKE) install-gcc

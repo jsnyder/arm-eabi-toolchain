@@ -277,7 +277,6 @@ cross-gcc: gmp mpfr mpc cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VE
 	--disable-libstdcxx-pch	--enable-poison-system-directories 	\
 	--with-sysroot="$(PREFIX)/$(TARGET)"				\
 	--with-build-time-tools="$(PREFIX)/$(TARGET)/bin"		\
-	--with-gmp=$(PREFIX) --with-mpfr=$(PREFIX) --with-mpc=$(PREFIX) \
 	--enable-extra-sgxxlite-multilibs $(CS_SPECS) \
 	--with-gmp=$(STATICLIBS) --with-mpfr=$(STATICLIBS) --with-mpc=$(STATICLIBS) && \
 	$(MAKE) -j$(PROCS) && \

@@ -88,6 +88,8 @@ STATICLIBS := $(CURDIR)/build/libs/
 
 ############### BUILD RULES ###############
 
+.SECONDARY:
+
 default: install-cross
 
 .PHONY: install-tools
@@ -170,8 +172,8 @@ else
 endif
 
 multilibbash: gcc-$(GCC_VERSION)-$(CS_BASE)
-	pushd gcc-$(GCC_VERSION)-$(CS_BASE) && \
-	patch -N -p0 < ../patches/gcc-multilib-bash.patch && \
+	pushd gcc-$(GCC_VERSION)-$(CS_BASE) ; \
+	patch -N -p0 < ../patches/gcc-multilib-bash.patch ; \
 	popd ;
 
 gcc-$(GCC_VERSION)-$(CS_BASE) : $(LOCAL_BASE)/gcc-$(CS_VERSION).tar.bz2
@@ -198,36 +200,24 @@ endif
 
 gmp: gmp-$(CS_BASE)
 	mkdir -p build/gmp && cd build/gmp ; \
-	pushd ../../gmp-$(CS_BASE) ; \
-	make clean ; \
-	popd ; \
 	../../gmp-$(CS_BASE)/configure --disable-shared --prefix=$(STATICLIBS) && \
 	$(MAKE) -j$(PROCS) all && \
 	$(MAKE) install
 
 mpfr: gmp mpfr-$(CS_BASE)
 	mkdir -p build/mpfr && cd build/mpfr && \
-	pushd ../../mpfr-$(CS_BASE) ; \
-	make clean ; \
-	popd ; \
 	../../mpfr-$(CS_BASE)/configure LDFLAGS="-Wl,-search_paths_first" --disable-shared --prefix=$(STATICLIBS) --with-gmp=$(STATICLIBS) && \
 	$(MAKE) -j$(PROCS) all && \
 	$(MAKE) install
 
 mpc: mpc-$(MPC_VERSION)
 	mkdir -p build/mpc && cd build/mpc ; \
-	pushd ../../mpc-$(MPC_VERSION) ; \
-	make clean ; \
-	popd ; \
 	../../mpc-$(CS_BASE)/configure --disable-shared --prefix=$(STATICLIBS) --with-mpfr=$(STATICLIBS) --with-gmp=$(STATICLIBS) && \
 	$(MAKE) -j$(PROCS) all && \
 	$(MAKE) install
 
 cross-binutils: binutils-$(CS_BASE)
 	mkdir -p build/binutils && cd build/binutils && \
-	pushd ../../binutils-$(CS_BASE) ; \
-	make clean ; \
-	popd ; \
 	../../binutils-$(CS_BASE)/configure --prefix=$(PREFIX)		\
 	--target=$(TARGET) --with-pkgversion=$(PKG_VERSION)		\
 	--with-sysroot="$(PREFIX)/$(TARGET)" --with-bugurl=$(BUG_URL)	\
@@ -244,9 +234,6 @@ CS_SPECS='--with-specs=%{save-temps: -fverbose-asm}			\
 
 cross-gcc-first: gmp mpfr mpc cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
 	mkdir -p build/gcc-first && cd build/gcc-first && \
-	pushd ../../gcc-$(GCC_VERSION)-$(CS_BASE) ; \
-	make clean ; \
-	popd ; \
 	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure			\
 	--prefix=$(PREFIX) --with-pkgversion=$(PKG_VERSION)		\
 	--with-bugurl=$(BUG_URL) --target=$(TARGET) $(DEPENDENCIES)	\
@@ -295,9 +282,6 @@ endif
 
 cross-newlib: cross-binutils cross-gcc-first newlib-$(CS_BASE)
 	mkdir -p build/newlib && cd build/newlib && \
-	pushd ../../newlib-$(CS_BASE) ; \
-	make clean ; \
-	popd ; \
 	../../newlib-$(CS_BASE)/configure --prefix=$(PREFIX)	\
 	--target=$(TARGET) --disable-newlib-supplied-syscalls	\
 	--disable-libgloss --disable-nls	\
@@ -309,9 +293,6 @@ cross-newlib: cross-binutils cross-gcc-first newlib-$(CS_BASE)
 
 cross-gdb: gdb-$(CS_BASE)
 	mkdir -p build/gdb && cd build/gdb && \
-	pushd ../../gdb-$(CS_BASE) ; \
-	make clean ; \
-	popd ; \
 	../../gdb-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) --with-pkgversion=$(PKG_VERSION) --with-bugurl=$(BUG_URL) --disable-werror && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-host install-target

@@ -90,6 +90,8 @@ STATICLIBS := $(CURDIR)/build/libs/
 
 .SECONDARY:
 
+.PRECIOUS: $(LOCAL_BASE)/%-$(CS_VERSION).tar.bz2
+
 default: install-cross
 
 .PHONY: install-tools
@@ -132,26 +134,28 @@ else
 	curl -LO $(BIN_URL)
 endif
 
-downloadbin: $(LOCAL_BIN)
-	@(t1=`openssl md5 $(LOCAL_BIN) | cut -f 2 -d " " -` && \
-	[ "$$t1" = "$(BIN_MD5_CHECKSUM)" ] || \
+$(LOCAL_BIN).md5sum : $(LOCAL_BIN)
+	@openssl md5 $< | cut -f 2 -d " " - > $@
+	@([ "$$(<$@)" = "$(BIN_MD5_CHECKSUM)" ] || \
 	( echo "Bad Checksum! Please remove the following file and retry: $(LOCAL_BIN)" && false ))
 
-downloadsrc: $(LOCAL_SOURCE)
-	@(t1=`openssl md5 $(LOCAL_SOURCE) | cut -f 2 -d " " -` && \
-	[ "$$t1" = "$(SOURCE_MD5_CHCKSUM)" ] || \
+$(LOCAL_SOURCE).md5sum : $(LOCAL_SOURCE)
+	@openssl md5 $< | cut -f 2 -d " " - > $@
+	@([ "$$(<$@)" = "$(SOURCE_MD5_CHCKSUM)" ] || \
 	( echo "Bad Checksum! Please remove the following file and retry: $(LOCAL_SOURCE)" && false ))
 
-$(LOCAL_BASE)/%-$(CS_VERSION).tar.bz2 : downloadsrc
+$(LOCAL_BASE)/%-$(CS_VERSION).tar.bz2 : $(LOCAL_SOURCE).md5sum
 ifeq ($(USER),root)
 	@(tgt=`tar -jtf $(LOCAL_SOURCE) | grep  $*` && \
-	sudo -u $(SUDO_USER) tar -jxvf $(LOCAL_SOURCE) $$tgt)
+	sudo -u $(SUDO_USER) tar -jxvf $(LOCAL_SOURCE) $$tgt && \
+	sudo -u $(SUDO_USER) touch $$tgt)
 else
 	@(tgt=`tar -jtf $(LOCAL_SOURCE) | grep  $*` && \
-	tar -jxvf $(LOCAL_SOURCE) $$tgt)
+	tar -jxvf $(LOCAL_SOURCE) $$tgt && \
+	touch $$tgt)
 endif
 
-arm-$(CS_BASE): downloadbin
+arm-$(CS_BASE): $(LOCAL_BIN).md5sum
 ifeq ($(USER),root)
 	sudo -u $(SUDO_USER) tar -jtf $(LOCAL_BIN) | grep -e '.*cs3.*[ah]$$' -e '.*\.ld' \
 	-e '.*.\.inc' | xargs tar -jxvf $(LOCAL_BIN)
@@ -182,6 +186,7 @@ ifeq ($(USER),root)
 else
 	tar -jxf $<
 endif
+	touch $@
 
 mpc-$(MPC_VERSION) : $(LOCAL_BASE)/mpc-$(CS_VERSION).tar.bz2
 ifeq ($(USER),root)
@@ -189,6 +194,7 @@ ifeq ($(USER),root)
 else
 	tar -jxf $<
 endif
+	touch $@
 
 
 %-$(CS_BASE) : $(LOCAL_BASE)/%-$(CS_VERSION).tar.bz2
@@ -197,6 +203,7 @@ ifeq ($(USER),root)
 else
 	tar -jxf $<
 endif
+	touch $@
 
 gmp: gmp-$(CS_BASE)
 	mkdir -p build/gmp && cd build/gmp ; \

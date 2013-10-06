@@ -101,7 +101,7 @@ MOD_CONFIG	= $(BUILD_PATH)/$(1)/$(CONFIG_STATUS)
 default: install-cross
 
 .PHONY: install-tools
-install-tools: cross-binutils cross-gcc cross-newlib cross-gdb
+install-tools: cross-binutils cross-gcc cross-gdb
 
 .PHONY: install-cross
 install-cross: install-tools install-note

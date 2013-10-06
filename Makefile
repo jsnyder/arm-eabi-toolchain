@@ -222,7 +222,7 @@ gmp: $(call MOD_CONFIG,gmp)
 
 $(call MOD_CONFIG,mpfr) : gmp mpfr-$(CS_BASE)
 	mkdir -p $(BUILD_PATH)/mpfr && cd $(BUILD_PATH)/mpfr && \
-	../../mpfr-$(CS_BASE)/configure LDFLAGS="-Wl,-search_paths_first" --disable-shared --prefix=$(STATICLIBS) --with-gmp=$(STATICLIBS)
+	../../mpfr-$(CS_BASE)/configure --disable-shared --enable-static --prefix=$(STATICLIBS) --with-gmp=$(STATICLIBS)
 
 mpfr: $(call MOD_CONFIG,mpfr)
 	cd $(BUILD_PATH)/$@ ; \
@@ -231,7 +231,7 @@ mpfr: $(call MOD_CONFIG,mpfr)
 
 $(call MOD_CONFIG,mpc) : mpc-$(MPC_VERSION)
 	mkdir -p $(BUILD_PATH)/mpc && cd $(BUILD_PATH)/mpc ; \
-	../../mpc-$(CS_BASE)/configure --disable-shared --prefix=$(STATICLIBS) --with-mpfr=$(STATICLIBS) --with-gmp=$(STATICLIBS)
+	../../mpc-$(CS_BASE)/configure --disable-shared --enable-static --prefix=$(STATICLIBS) --with-mpfr=$(STATICLIBS) --with-gmp=$(STATICLIBS)
 
 mpc: $(call MOD_CONFIG,mpc)
 	cd $(BUILD_PATH)/$@ ; \

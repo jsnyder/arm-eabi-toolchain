@@ -84,7 +84,13 @@ endif
 BUG_URL ?= https://github.com/jsnyder/arm-eabi-toolchain
 PKG_VERSION ?= "32-bit ARM EABI Toolchain $(PKG_TAG)-$(CS_BASE)-$(CS_REV)-$(BUILD_ID)"
 
-STATICLIBS := $(CURDIR)/build/libs/
+STATICLIBS := $(CURDIR)/$(BUILD_PATH)/libs/
+
+##############  BUILD VARS  ###############
+
+BUILD_PATH	= build
+CONFIG_STATUS	= config.status
+MOD_CONFIG	= $(BUILD_PATH)/$(1)/$(CONFIG_STATUS)
 
 ############### BUILD RULES ###############
 
@@ -205,30 +211,42 @@ else
 endif
 	touch $@
 
-gmp: gmp-$(CS_BASE)
-	mkdir -p build/gmp && cd build/gmp ; \
-	../../gmp-$(CS_BASE)/configure --disable-shared --prefix=$(STATICLIBS) && \
+$(call MOD_CONFIG,gmp) : gmp-$(CS_BASE)
+	mkdir -p $(BUILD_PATH)/gmp && cd $(BUILD_PATH)/gmp ; \
+	../../gmp-$(CS_BASE)/configure --disable-shared --prefix=$(STATICLIBS)
+
+gmp: $(call MOD_CONFIG,gmp)
+	cd $(BUILD_PATH)/$@ ; \
 	$(MAKE) -j$(PROCS) all && \
 	$(MAKE) install
 
-mpfr: gmp mpfr-$(CS_BASE)
-	mkdir -p build/mpfr && cd build/mpfr && \
-	../../mpfr-$(CS_BASE)/configure LDFLAGS="-Wl,-search_paths_first" --disable-shared --prefix=$(STATICLIBS) --with-gmp=$(STATICLIBS) && \
+$(call MOD_CONFIG,mpfr) : gmp mpfr-$(CS_BASE)
+	mkdir -p $(BUILD_PATH)/mpfr && cd $(BUILD_PATH)/mpfr && \
+	../../mpfr-$(CS_BASE)/configure LDFLAGS="-Wl,-search_paths_first" --disable-shared --prefix=$(STATICLIBS) --with-gmp=$(STATICLIBS)
+
+mpfr: $(call MOD_CONFIG,mpfr)
+	cd $(BUILD_PATH)/$@ ; \
 	$(MAKE) -j$(PROCS) all && \
 	$(MAKE) install
 
-mpc: mpc-$(MPC_VERSION)
-	mkdir -p build/mpc && cd build/mpc ; \
-	../../mpc-$(CS_BASE)/configure --disable-shared --prefix=$(STATICLIBS) --with-mpfr=$(STATICLIBS) --with-gmp=$(STATICLIBS) && \
+$(call MOD_CONFIG,mpc) : mpc-$(MPC_VERSION)
+	mkdir -p $(BUILD_PATH)/mpc && cd $(BUILD_PATH)/mpc ; \
+	../../mpc-$(CS_BASE)/configure --disable-shared --prefix=$(STATICLIBS) --with-mpfr=$(STATICLIBS) --with-gmp=$(STATICLIBS)
+
+mpc: $(call MOD_CONFIG,mpc)
+	cd $(BUILD_PATH)/$@ ; \
 	$(MAKE) -j$(PROCS) all && \
 	$(MAKE) install
 
-cross-binutils: binutils-$(CS_BASE)
-	mkdir -p build/binutils && cd build/binutils && \
+$(call MOD_CONFIG,binutils) : binutils-$(CS_BASE)
+	mkdir -p $(BUILD_PATH)/binutils && cd $(BUILD_PATH)/binutils && \
 	../../binutils-$(CS_BASE)/configure --prefix=$(PREFIX)		\
 	--target=$(TARGET) --with-pkgversion=$(PKG_VERSION)		\
 	--with-sysroot="$(PREFIX)/$(TARGET)" --with-bugurl=$(BUG_URL)	\
-	--disable-nls --disable-werror && \
+	--disable-nls --disable-werror
+
+cross-binutils: $(call MOD_CONFIG,binutils)
+	cd $(BUILD_PATH)/binutils ; \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-host install-target
 
@@ -239,8 +257,8 @@ CS_SPECS='--with-specs=%{save-temps: -fverbose-asm}			\
 %{O*:%{O|O0|O1|O2|Os:;:%{!fno-remove-local-statics:			\
 -fremove-local-statics}}}'
 
-cross-gcc-first: gmp mpfr mpc cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
-	mkdir -p build/gcc-first && cd build/gcc-first && \
+$(call MOD_CONFIG,gcc-first) : gmp mpfr mpc cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
+	mkdir -p $(BUILD_PATH)/gcc-first && cd $(BUILD_PATH)/gcc-first && \
 	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure			\
 	--prefix=$(PREFIX) --with-pkgversion=$(PKG_VERSION)		\
 	--with-bugurl=$(BUG_URL) --target=$(TARGET) $(DEPENDENCIES)	\
@@ -253,13 +271,16 @@ cross-gcc-first: gmp mpfr mpc cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multi
 	--with-sysroot="$(PREFIX)/$(TARGET)"				\
 	--with-build-time-tools="$(PREFIX)/$(TARGET)/bin"		\
 	--disable-libffi --enable-extra-sgxxlite-multilibs $(CS_SPECS) \
-	--with-gmp=$(STATICLIBS) --with-mpfr=$(STATICLIBS) --with-mpc=$(STATICLIBS) && \
+	--with-gmp=$(STATICLIBS) --with-mpfr=$(STATICLIBS) --with-mpc=$(STATICLIBS)
+
+cross-gcc-first: $(call MOD_CONFIG,gcc-first)
+	cd $(BUILD_PATH)/gcc-first ; \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
 	$(MAKE) install-gcc
 
-cross-gcc: gmp mpfr mpc cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
-	mkdir -p build/gcc-final && cd build/gcc-final && \
+$(call MOD_CONFIG,gcc-final) : gmp mpfr mpc cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
+	mkdir -p $(BUILD_PATH)/gcc-final && cd $(BUILD_PATH)/gcc-final && \
 	mkdir -p $(PREFIX)/$(TARGET)/usr/include && \
 	../../gcc-$(GCC_VERSION)-$(CS_BASE)/configure			\
 	--prefix=$(PREFIX) --with-pkgversion=$(PKG_VERSION)		\
@@ -272,7 +293,10 @@ cross-gcc: gmp mpfr mpc cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VE
 	--with-sysroot="$(PREFIX)/$(TARGET)"				\
 	--with-build-time-tools="$(PREFIX)/$(TARGET)/bin"		\
 	--enable-extra-sgxxlite-multilibs $(CS_SPECS) \
-	--with-gmp=$(STATICLIBS) --with-mpfr=$(STATICLIBS) --with-mpc=$(STATICLIBS) && \
+	--with-gmp=$(STATICLIBS) --with-mpfr=$(STATICLIBS) --with-mpc=$(STATICLIBS)
+
+cross-gcc: $(call MOD_CONFIG,gcc-final)
+	cd $(BUILD_PATH)/gcc-final ; \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-target && \
 	$(MAKE) install-gcc
@@ -287,20 +311,26 @@ else
 NEWLIB_FLAGS?="-g -O2 -fno-unroll-loops"
 endif
 
-cross-newlib: cross-binutils cross-gcc-first newlib-$(CS_BASE)
-	mkdir -p build/newlib && cd build/newlib && \
+$(call MOD_CONFIG,newlib) : cross-binutils cross-gcc-first newlib-$(CS_BASE)
+	mkdir -p $(BUILD_PATH)/newlib && cd $(BUILD_PATH)/newlib && \
 	../../newlib-$(CS_BASE)/configure --prefix=$(PREFIX)	\
 	--target=$(TARGET) --disable-newlib-supplied-syscalls	\
 	--disable-libgloss --disable-nls	\
 	--with-build-time-tools="$(PREFIX)/bin"       \
 	--enable-newlib-io-long-long --enable-newlib-register-fini \
-	--disable-newlib-io-float && \
+	--disable-newlib-io-float
+
+cross-newlib: $(call MOD_CONFIG,newlib)
+	cd $(BUILD_PATH)/newlib ; \
 	$(MAKE) -j$(PROCS) CFLAGS_FOR_TARGET=$(NEWLIB_FLAGS) CCASFLAGS=$(NEWLIB_FLAGS) && \
 	$(MAKE) install
 
-cross-gdb: gdb-$(CS_BASE)
-	mkdir -p build/gdb && cd build/gdb && \
-	../../gdb-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) --with-pkgversion=$(PKG_VERSION) --with-bugurl=$(BUG_URL) --disable-werror && \
+$(call MOD_CONFIG,gdb) : gdb-$(CS_BASE)
+	mkdir -p $(BUILD_PATH)/gdb && cd $(BUILD_PATH)/gdb && \
+	../../gdb-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) --with-pkgversion=$(PKG_VERSION) --with-bugurl=$(BUG_URL) --disable-werror
+
+cross-gdb: $(call MOD_CONFIG,gdb)
+	cd $(BUILD_PATH)/gdb ; \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-host install-target
 

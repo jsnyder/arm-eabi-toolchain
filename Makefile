@@ -106,6 +106,7 @@ install-tools: cross-binutils cross-gcc cross-gdb
 .PHONY: install-cross
 install-cross: install-tools install-note
 
+.PHONY: install-deps
 install-deps: gmp mpfr mpc
 
 sudomode:

@@ -38,18 +38,18 @@ endif
 
 MATCH_CS        ?= false
 OPT_NEWLIB_SIZE ?= true
+FULL_MULTILIBS  ?= false
 
 ####    PRIMARY TOOLCHAIN VERSIONS    #####
 
-CS_MAJ		?= 2012
-CS_MIN		?= 09
-CS_BASE		?= $(CS_MAJ).$(CS_MIN)
-CS_REV 		?= 63
+CS_MAJ			?= 2013
+CS_MIN			?= 05
+CS_BASE			?= $(CS_MAJ).$(CS_MIN)
+CS_REV 			?= 23
 GCC_VERSION 	?= 4.7
-MPC_VERSION 	?= 0.8.1
-SOURCE_PACKAGE	?= 10925
-BIN_PACKAGE	?= 10926
-## https://sourcery.mentor.com/GNUToolchain/package10384/public/arm-none-eabi/arm-2012.03-56-arm-none-eabi.src.tar.bz2
+MPC_VERSION 	?= 2013.05
+SOURCE_PACKAGE	?= 11441
+BIN_PACKAGE		?= 11442
 
 ####  PRIMARY TOOLCHAIN URLS / FILES  #####
 
@@ -58,15 +58,14 @@ CS_VERSION 	= $(CS_BASE)-$(CS_REV)
 LOCAL_BASE 	= arm-$(CS_VERSION)-arm-none-eabi
 LOCAL_SOURCE 	= $(LOCAL_BASE).src.tar.bz2
 LOCAL_BIN 	= $(LOCAL_BASE)-i686-pc-linux-gnu.tar.bz2
-SOURCE_URL 	= http://sourcery.mentor.com/sgpp/lite/arm/portal/package$(SOURCE_PACKAGE)/public/arm-none-eabi/$(LOCAL_SOURCE)
-BIN_URL 	= http://sourcery.mentor.com/sgpp/lite/arm/portal/package$(BIN_PACKAGE)/public/arm-none-eabi/$(LOCAL_BIN)
+SOURCE_URL 	= https://sourcery.mentor.com/GNUToolchain/package$(SOURCE_PACKAGE)/public/arm-none-eabi/$(LOCAL_SOURCE)
+BIN_URL 	= https://sourcery.mentor.com/GNUToolchain/package$(BIN_PACKAGE)/public/arm-none-eabi/$(LOCAL_BIN)
 
-SOURCE_MD5_CHCKSUM ?= b3671f2536f8db94ade739927e01a2c7
-BIN_MD5_CHECKSUM ?= d094880c6ac3aea16d4bfb88077186f7
-
+SOURCE_MD5_CHCKSUM ?= 4c791ddbb3d4bcfee29a26eb4db5a244
+BIN_MD5_CHECKSUM ?= 9d206de1c74f9454e468ddcdd72c9c53
 
 ####    BUILD LABELING / TAGGING      #####
-BUILD_ID	= $(shell git describe --always)
+BUILD_ID   ?= $(shell git describe --always)
 TODAY           = $(shell date "+%Y%m%d")
 
 ifeq ($(strip $(BUILD_ID)),)
@@ -79,6 +78,12 @@ NEWLIB_FLAGS?="-g -O2 -fno-unroll-loops"
 PKG_TAG?="CS"
 else
 PKG_TAG?="JBS"
+endif
+
+ifeq ($(FULL_MULTILIBS),true)
+MULTILIB_FLAGS?="--enable-extra-sgxx-multilibs"
+else
+MULTILIB_FLAGS?="--enable-extra-sgxxlite-multilibs"
 endif
 
 BUG_URL ?= https://github.com/jsnyder/arm-eabi-toolchain
@@ -271,7 +276,7 @@ $(call MOD_CONFIG,gcc-first) : gmp mpfr mpc cross-binutils gcc-$(GCC_VERSION)-$(
 	--disable-decimal-float --enable-poison-system-directories 	\
 	--with-sysroot="$(PREFIX)/$(TARGET)"				\
 	--with-build-time-tools="$(PREFIX)/$(TARGET)/bin"		\
-	--disable-libffi --enable-extra-sgxxlite-multilibs $(CS_SPECS) \
+	--disable-libffi $(MULTILIB_FLAGS) $(CS_SPECS) \
 	--with-gmp=$(STATICLIBS) --with-mpfr=$(STATICLIBS) --with-mpc=$(STATICLIBS)
 
 cross-gcc-first: $(call MOD_CONFIG,gcc-first)
@@ -293,7 +298,7 @@ $(call MOD_CONFIG,gcc-final) : gmp mpfr mpc cross-binutils cross-gcc-first cross
 	--disable-libstdcxx-pch	--enable-poison-system-directories 	\
 	--with-sysroot="$(PREFIX)/$(TARGET)"				\
 	--with-build-time-tools="$(PREFIX)/$(TARGET)/bin"		\
-	--enable-extra-sgxxlite-multilibs $(CS_SPECS) \
+	$(MULTILIB_FLAGS) $(CS_SPECS) \
 	--with-gmp=$(STATICLIBS) --with-mpfr=$(STATICLIBS) --with-mpc=$(STATICLIBS)
 
 cross-gcc: $(call MOD_CONFIG,gcc-final)

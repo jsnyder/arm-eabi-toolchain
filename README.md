@@ -63,6 +63,9 @@ Next build the toolchain:
 make install-cross
 ```
 
+*Note:* My most recent test on Mac OS X 10.8 with XCode Command Line Tools from April 2013, it was
+necessary to use the instructions in the Installing gcc-4.2 section.
+
 You should be able to also specify a specific install/prefix location
 by building using the following type of invokation:
 
@@ -97,6 +100,8 @@ or with gcc-4.2:
 CC=gcc-4.2 make install-cross
 ```
 
+*NOTE: GCC 4.2 has been removed from recent versions of Apple's Command Line Tools for XCode, if you
+*need this compiler you'll have to follow instructions in the gcc 4.2 section below.
 
 This should build the compiler, newlib, gdb, etc.. and install them all into a
 directory called arm-cs-tools in your home directory. If you want to install
@@ -118,6 +123,48 @@ can clean up the intermediate files with the following command:
 ```bash
 make clean
 ```
+
+Installing gcc-4.2
+------------------
+
+First things first, see if it is installed. Write `gcc` in your commandline and double tab. If there
+is no file called gcc-4.2 you most likely do not have it. One more check though is to check the gcc
+version by doing `gcc -v`. Look at the last line of the output, if it looks like this
+
+```
+gcc version 4.2.1 (Based on Apple Inc. build 5658) (LLVM build 2336.11.00)
+```
+
+you may think you are in luck and you have gcc-4.2. Unfortunately it is not that simple. This is the
+llvm version of gcc-4.2 from Apple and unfortunately does not work with the latest CodeSourcery
+packages.
+
+The correct gcc version is easy to install though using homebrew.
+
+```bash
+brew tap homebrew/dupes && brew install apple-gcc42
+```
+
+and then do
+
+```bash
+CC=gcc-4.2 make install-cross
+```
+###Note:
+Homebrew-Dupes also offers a gcc formula which installs, at the time of this writing, GCC 4.7. I have not tried this version myself but might be worth a try since 4.2 is getting pretty dated.
+
+Multilib Build Customization
+----------------------------
+
+By default, the toolchain will build with the the multilibs included in the binary builds of G++
+Lite. If you want to build multilibs for a larger set of targets similar to the commercial release,
+you can build like this:
+
+```bash
+FULL_MULTILIBS=true make install-cross
+```
+
+*NOTE:* Building with this option will take significantly longer.
 
 Newlib Build Customization
 --------------------------

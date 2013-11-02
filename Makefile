@@ -253,6 +253,7 @@ $(call MOD_CONFIG,binutils) : binutils-$(CS_BASE)
 
 cross-binutils: $(call MOD_CONFIG,binutils)
 	cd $(BUILD_PATH)/binutils ; \
+	touch makeinfo && chmod +x makeinfo && export PATH=$$(pwd):$$PATH && \
 	$(MAKE) -j$(PROCS) && \
 	$(MAKE) installdirs install-host install-target
 
@@ -337,6 +338,7 @@ $(call MOD_CONFIG,gdb) : gdb-$(CS_BASE)
 
 cross-gdb: $(call MOD_CONFIG,gdb)
 	cd $(BUILD_PATH)/gdb ; \
+	touch makeinfo && chmod +x makeinfo && export PATH=$$(pwd):$$PATH && \
 	$(MAKE) -j$(PROCS) CFLAGS="-Wno-error=return-type" && \
 	$(MAKE) installdirs install-host install-target
 

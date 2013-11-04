@@ -1,7 +1,10 @@
 build
+libs
 gcc-*
 newlib-*
 gdb-*
+gmp-*
+mpc-*
 mpfr-*
 binutils-*
 arm-*

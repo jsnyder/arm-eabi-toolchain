@@ -212,6 +212,13 @@ You can also define your own Newlib flags:
 NEWLIB_FLAGS="-g -O2 -fno-unroll-loops" make install-cross
 ```
 
+Additionally, there is an option to exclude float support from Newlib functions. At the moment this
+should disable float support for IO functions:
+
+```bash
+NEWLIB_NOFLOAT=true make install-cross
+```
+
 Extras From Binary Distribution
 -------------------------------
 

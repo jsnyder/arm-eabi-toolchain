@@ -36,9 +36,10 @@ else
 PROCS  ?= 2
 endif
 
-MATCH_CS        ?= false
-OPT_NEWLIB_SIZE ?= true
-FULL_MULTILIBS  ?= false
+MATCH_CS           ?= false
+OPT_NEWLIB_SIZE    ?= true
+NEWLIB_NOFLOAT     ?= false
+FULL_MULTILIBS     ?= false
 
 ####    PRIMARY TOOLCHAIN VERSIONS    #####
 
@@ -80,14 +81,24 @@ else
 PKG_TAG?="JBS"
 endif
 
+ifeq ($(NEWLIB_NOFLOAT),true)
+NEWLIB_FLOAT?="--disable-newlib-io-float"
+FLOAT_TAG?="NO_FLOAT_IO"
+else
+NEWLIB_FLOAT?=""
+FLOAT_TAG?="FLOAT_IO"
+endif
+
 ifeq ($(FULL_MULTILIBS),true)
 MULTILIB_FLAGS?="--enable-extra-sgxx-multilibs"
+MULTILIB_TAG?="SGXX_ML"
 else
 MULTILIB_FLAGS?="--enable-extra-sgxxlite-multilibs"
+MULTILIB_TAG?="SGXXLITE_ML"
 endif
 
 BUG_URL ?= https://github.com/jsnyder/arm-eabi-toolchain
-PKG_VERSION ?= "32-bit ARM EABI Toolchain $(PKG_TAG)-$(CS_BASE)-$(CS_REV)-$(BUILD_ID)"
+PKG_VERSION ?= "32-bit ARM EABI Toolchain $(PKG_TAG)-$(FLOAT_TAG)-$(MULTILIB_TAG)-$(CS_BASE)-$(CS_REV)-$(BUILD_ID)"
 
 STATICLIBS := $(CURDIR)/$(BUILD_PATH)/libs/
 
@@ -324,8 +335,9 @@ $(call MOD_CONFIG,newlib) : cross-binutils cross-gcc-first newlib-$(CS_BASE)
 	--target=$(TARGET) --disable-newlib-supplied-syscalls	\
 	--disable-libgloss --disable-nls	\
 	--with-build-time-tools="$(PREFIX)/bin"       \
-	--enable-newlib-io-long-long --enable-newlib-register-fini \
-	--disable-newlib-io-float
+	$(NEWLIB_FLOAT) \
+	--enable-newlib-io-long-long --enable-newlib-register-fini
+	
 
 cross-newlib: $(call MOD_CONFIG,newlib)
 	cd $(BUILD_PATH)/newlib ; \

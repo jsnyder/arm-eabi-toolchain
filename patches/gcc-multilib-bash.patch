@@ -1,21 +1,12 @@
---- gcc/genmultilib.orig	2010-05-01 19:19:02.711476350 -0500
-+++ gcc/genmultilib	2010-05-01 19:12:17.842723935 -0500
+--- gcc/genmultilib.orig	2013-10-23 03:59:39.000000000 -0500
++++ gcc/genmultilib	2014-02-10 15:09:48.000000000 -0600
 @@ -1,4 +1,4 @@
 -#!/bin/sh 
 +#!/bin/bash
  # Generates multilib.h.
- #   Copyright (C) 1994, 1995, 1996, 1997, 1999, 2002, 2007
- #   Free Software Foundation, Inc.
-@@ -146,7 +146,7 @@
+ #   Copyright (C) 1994-2013 Free Software Foundation, Inc.
  
- # Handle aliases
- cat >tmpmultilib3 <<\EOF
--#!/bin/sh
-+#!/bin/bash
- # Output a list of aliases (including the original name) for a multilib.
- 
- echo $1
-@@ -169,7 +169,7 @@
+@@ -155,7 +155,7 @@
  # by creating a temporary shell script which invokes itself.
  rm -f tmpmultilib
  cat >tmpmultilib <<\EOF
@@ -24,7 +15,7 @@
  # This recursive script basically outputs all combinations of its
  # input arguments, handling mutually exclusive sets of options by
  # repetition.  When the script is called, ${initial} is the list of
-@@ -205,7 +205,7 @@
+@@ -191,7 +191,7 @@
  # If there exceptions, weed them out now
  if [ -n "${exceptions}" ]; then
    cat >tmpmultilib2 <<\EOF
@@ -33,7 +24,16 @@
  # This recursive script weeds out any combination of multilib
  # switches that should not be generated.  The output looks like
  # a list of subdirectory names with leading and trailing slashes.
-@@ -319,7 +319,7 @@
+@@ -217,7 +217,7 @@
+ # filter out combinations not in this list.
+ if [ -n "${multilib_required}" ]; then
+   cat >tmpmultilib2 <<\EOF
+-#!/bin/sh
++#!/bin/bash
+ # This recursive script weeds out any combination of multilib
+ # switches that not in the expected list.
+ 
+@@ -331,7 +331,7 @@
  # In other words, we must output all combinations of matches.
  rm -f tmpmultilib2
  cat >tmpmultilib2 <<\EOF
@@ -42,3 +42,21 @@
  # The positional parameters are a list of matches to consider.
  # ${dirout} is the directory name and ${optout} is the current list of
  # options.
+@@ -368,7 +368,7 @@
+ # MULTILIB_OSDIRNAMES or the option combination itself.
+ rm -rf tmpmultilib3
+ cat >tmpmultilib3 <<\EOF
+-#!/bin/sh
++#!/bin/bash
+ 
+ dirout=
+ combo=$1
+@@ -418,7 +418,7 @@
+ # and negate each option that is not present.
+ rm -rf tmpmultilib4
+ cat > tmpmultilib4 <<\EOF
+-#!/bin/sh
++#!/bin/bash
+ 
+ optout=
+ combo=$1

@@ -1,9 +1,11 @@
 ARM EABI Toolchain Builder
 ==========================
 
-This build system has been tested on Mac OS X 10.6 (should also work
-on 10.5) and Ubuntu 11.04.  Small modifications may be needed in order
-to make it work with other platforms.
+This toolchain builder builds a GCC and Newlib-based ARM EABI toolchain using the Sourcery CodeBench
+Lite sources.
+
+This build system has been tested on Mac OS X 10.10.1. Small modifications may be needed in order to
+make it work with other platforms.
 
 Note: If you have previously built a toolchain of another version, out
 of the same builder directory, make sure to do the following first
@@ -23,17 +25,17 @@ how newlib, in particular, gets compiled.
 Requirements (OS X)
 -------------------
 
-You will need to have GCC, make, binutils and texinfo installed on your machine
-to compile all of this. You can get all of these on Mac OS X, by
-just installing the Apple Developer Tools which are free
-[here](http://developer.apple.com/Tools/).
+You will need to have clang, make, binutils installed on your machine to compile all of
+this. You can get most of these on Mac OS X, by just installing the Apple Developer Tools which are
+free [here](http://developer.apple.com/Tools/).
 
-For those of you who get to this page using Xcode 4.3 and Lion, the command line tools are no longer bundled by default, and there is no /Developer anymore. To install them, open Xcode, go to Preferences -> Downloads -> Components -> Command Line Tools. This should install make, gcc etc.
+For Xcode 4.3 or later, the command line tools are no longer bundled by default, and there is no
+/Developer anymore. To install them, open Xcode, go to Preferences -> Downloads -> Components ->
+Command Line Tools. This should install make, gcc etc.
 
-You may also need libelf and texinfo first.  I recommend installing
-these from [homebrew](https://github.com/mxcl/homebrew) for now.
-I'll add these to the Makefile once I have a consistent configuration
-that can be used for both Linux & OS X.
+You will also need libelf and texinfo first.  I recommend installing these from
+[homebrew](https://github.com/mxcl/homebrew) for now. I'll add these to the Makefile once I have a
+consistent configuration that can be used for both Linux & OS X.
 
 With homebrew you can install those dependencies like this:
 

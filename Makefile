@@ -31,7 +31,7 @@ PATH   := ${PREFIX}/bin:${PATH}
 ifeq ($(UNAME), Linux)
 PROCS  ?= $(shell grep -c ^processor /proc/cpuinfo)
 else ifeq ($(UNAME), Darwin)
-PROCS  ?= $(shell sysctl hw.ncpu | awk '{print $$2}')
+PROCS  ?= $(shell sysctl -n hw.ncpu)
 else
 PROCS  ?= 2
 endif

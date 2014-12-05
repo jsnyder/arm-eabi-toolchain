@@ -270,10 +270,7 @@ cross-binutils: $(call MOD_CONFIG,binutils)
 
 CS_SPECS='--with-specs=%{save-temps: -fverbose-asm}			\
 -D__CS_SOURCERYGXX_MAJ__=$(CS_MAJ) -D__CS_SOURCERYGXX_MIN__=$(CS_MIN)	\
--D__CS_SOURCERYGXX_REV__=$(CS_REV) %{O2:%{!fno-remove-local-statics:	\
--fremove-local-statics}}						\
-%{O*:%{O|O0|O1|O2|Os:;:%{!fno-remove-local-statics:			\
--fremove-local-statics}}}'
+-D__CS_SOURCERYGXX_REV__=$(CS_REV)'
 
 $(call MOD_CONFIG,gcc-first) : gmp mpfr mpc cross-binutils gcc-$(GCC_VERSION)-$(CS_BASE) multilibbash
 	mkdir -p $(BUILD_PATH)/gcc-first && cd $(BUILD_PATH)/gcc-first && \

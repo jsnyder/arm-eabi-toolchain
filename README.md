@@ -23,14 +23,14 @@ how newlib, in particular, gets compiled.
 Requirements (OS X)
 -------------------
 
-You will need to have GCC, make, binutils and latex installed on your machine
+You will need to have GCC, make, binutils and texinfo installed on your machine
 to compile all of this. You can get all of these on Mac OS X, by
 just installing the Apple Developer Tools which are free
 [here](http://developer.apple.com/Tools/).
 
 For those of you who get to this page using Xcode 4.3 and Lion, the command line tools are no longer bundled by default, and there is no /Developer anymore. To install them, open Xcode, go to Preferences -> Downloads -> Components -> Command Line Tools. This should install make, gcc etc.
 
-You will also need gmp, mpfr and mpc first.  I recommend installing
+You may also need libelf and texinfo first.  I recommend installing
 these from [homebrew](https://github.com/mxcl/homebrew) for now.
 I'll add these to the Makefile once I have a consistent configuration
 that can be used for both Linux & OS X.
@@ -38,7 +38,7 @@ that can be used for both Linux & OS X.
 With homebrew you can install those dependencies like this:
 
 ```bash
-brew install mpfr gmp libmpc libelf texinfo
+brew install libelf texinfo
 ```
 
 
@@ -49,8 +49,8 @@ These instructions should now also work on Ubuntu Linux, provided the
 following packages have been installed prior to attempting the build:
 
 ```bash
-sudo apt-get install curl flex bison libgmp3-dev libmpfr-dev texinfo \
-      libelf-dev autoconf build-essential libncurses5-dev libmpc-dev \
+sudo apt-get install curl flex bison texinfo \
+      libelf-dev autoconf build-essential libncurses5-dev \
 ```
 
 

@@ -42,14 +42,14 @@ FULL_MULTILIBS  ?= false
 
 ####    PRIMARY TOOLCHAIN VERSIONS    #####
 
-CS_MAJ			?= 2013
-CS_MIN			?= 11
+CS_MAJ			?= 2014
+CS_MIN			?= 05
 CS_BASE			?= $(CS_MAJ).$(CS_MIN)
-CS_REV 			?= 24
+CS_REV 			?= 28
 GCC_VERSION 	?= 4.8
 MPC_VERSION 	?= 2013.11
-SOURCE_PACKAGE	?= 11441
-BIN_PACKAGE		?= 11442
+SOURCE_PACKAGE	?= 12773
+BIN_PACKAGE		?= 12774
 
 ####  PRIMARY TOOLCHAIN URLS / FILES  #####
 
@@ -61,8 +61,8 @@ LOCAL_BIN 	= $(LOCAL_BASE)-i686-pc-linux-gnu.tar.bz2
 SOURCE_URL 	= https://sourcery.mentor.com/GNUToolchain/package$(SOURCE_PACKAGE)/public/arm-none-eabi/$(LOCAL_SOURCE)
 BIN_URL 	= https://sourcery.mentor.com/GNUToolchain/package$(BIN_PACKAGE)/public/arm-none-eabi/$(LOCAL_BIN)
 
-SOURCE_MD5_CHCKSUM ?= 3d89a0fb72e1e3cbb3fed500dbeeec8f
-BIN_MD5_CHECKSUM ?= 8ba2bddb0a28f5606db3b6f1b9ffe6af
+SOURCE_MD5_CHCKSUM ?= 0683c1a3512f88a5519e840919230c92
+BIN_MD5_CHECKSUM ?= 02fc7078af9c9c7e792f026c772374ae
 
 
 ####    BUILD LABELING / TAGGING      #####
@@ -277,14 +277,12 @@ cross-gcc: cross-binutils cross-gcc-first cross-newlib gcc-$(GCC_VERSION)-$(CS_B
 	--enable-languages="c,c++" --with-gnu-ld --with-gnu-as		\
 	--with-newlib --disable-nls --disable-libssp			\
 	--disable-shared --enable-threads --with-headers=yes		\
-	--disable-libgomp	 --enable-lto		\
+	--disable-libmudflap --disable-libgomp     --enable-lto		\
 	--disable-libstdcxx-pch	--enable-poison-system-directories 	\
 	--with-sysroot="$(PREFIX)/$(TARGET)"				\
 	--with-build-time-tools="$(PREFIX)/$(TARGET)/bin"		\
 	$(MULTILIB_FLAGS) $(CS_SPECS) && \
 	$(MAKE) -j$(PROCS) && \
-	$(MAKE) -j$(PROCS) configure-target-libmudflap
-	$(MAKE) -j$(PROCS) make all-target-libmudflap
 	$(MAKE) installdirs install-target && \
 	$(MAKE) install-gcc
 

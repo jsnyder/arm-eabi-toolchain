@@ -28,6 +28,8 @@ to compile all of this. You can get all of these on Mac OS X, by
 just installing the Apple Developer Tools which are free
 [here](http://developer.apple.com/Tools/).
 
+For those of you who get to this page using Xcode 4.3 and Lion, the command line tools are no longer bundled by default, and there is no /Developer anymore. To install them, open Xcode, go to Preferences -> Downloads -> Components -> Command Line Tools. This should install make, gcc etc.
+
 You will also need gmp, mpfr and mpc first.  I recommend installing
 these from [homebrew](https://github.com/mxcl/homebrew) for now.
 I'll add these to the Makefile once I have a consistent configuration
@@ -208,6 +210,13 @@ You can also define your own Newlib flags:
 
 ```bash
 NEWLIB_FLAGS="-g -O2 -fno-unroll-loops" make install-cross
+```
+
+Additionally, there is an option to exclude float support from Newlib functions. At the moment this
+should disable float support for IO functions:
+
+```bash
+NEWLIB_NOFLOAT=true make install-cross
 ```
 
 Extras From Binary Distribution

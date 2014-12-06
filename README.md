@@ -44,8 +44,7 @@ For Xcode 4.3 or later, the command line tools are no longer bundled by default,
 Command Line Tools. This should install make, gcc etc.
 
 You will also need libelf and texinfo first.  I recommend installing these from
-[homebrew](https://github.com/mxcl/homebrew) for now. I'll add these to the Makefile once I have a
-consistent configuration that can be used for both Linux & OS X.
+[homebrew](https://github.com/mxcl/homebrew).
 
 With homebrew you can install those dependencies like this:
 

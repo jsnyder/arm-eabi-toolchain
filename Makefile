@@ -260,7 +260,7 @@ $(call MOD_CONFIG,binutils) : binutils-$(CS_BASE)
 	../../binutils-$(CS_BASE)/configure --prefix=$(PREFIX)		\
 	--target=$(TARGET) --with-pkgversion=$(PKG_VERSION)		\
 	--with-sysroot="$(PREFIX)/$(TARGET)" --with-bugurl=$(BUG_URL)	\
-	--disable-nls --disable-werror
+	--disable-nls --disable-werror --disable-gdb --disable-libdecnumber --disable-readline --disable-sim
 
 cross-binutils: $(call MOD_CONFIG,binutils)
 	cd $(BUILD_PATH)/binutils ; \
@@ -343,13 +343,14 @@ cross-newlib: $(call MOD_CONFIG,newlib)
 
 $(call MOD_CONFIG,gdb) : gdb-$(CS_BASE)
 	mkdir -p $(BUILD_PATH)/gdb && cd $(BUILD_PATH)/gdb && \
-	../../gdb-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) --with-pkgversion=$(PKG_VERSION) --with-bugurl=$(BUG_URL) --disable-werror
+	../../gdb-$(CS_BASE)/configure --prefix=$(PREFIX) --target=$(TARGET) --with-pkgversion=$(PKG_VERSION) --with-bugurl=$(BUG_URL) --disable-werror --disable-sim --disable-binutils --disable-elfcpp --disable-gas --disable-gold --disable-gprof --disable-ld
 
 cross-gdb: $(call MOD_CONFIG,gdb)
 	cd $(BUILD_PATH)/gdb ; \
 	touch makeinfo && chmod +x makeinfo && export PATH=$$(pwd):$$PATH && \
 	$(MAKE) -j$(PROCS) CFLAGS="-Wno-error=return-type" && \
 	$(MAKE) installdirs install-host install-target
+
 
 .PHONY : clean
 clean:

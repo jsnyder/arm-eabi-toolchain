@@ -9,9 +9,10 @@ build also includes some optimizations for Newlib that provide smaller binaries.
 
 *NOTE:* Mentor have indicated that there won't be future ARM EABI releases of the free Lite edition
 of CodeBench, so the 2014.05 release may be the last. You may also be able to use a modified version
-of this makefile with the sources Mentor provides with the Professional version of CodeBench. If
-future source releases are made available, this Makefile will be updated for them.  Otherwise, we
-may start to build custom versions of other GCC/Newlib toolchain sources.
+of this makefile with the sources Mentor provides with the Professional version of CodeBench (which
+they plan to continue supporting). If future source releases are made available, this Makefile will
+be updated for them.  If not, we may start to build custom versions of other GCC/Newlib toolchain
+sources.
 
 This build system has been tested on Mac OS X 10.10.1. Small modifications may be needed in order to
 make it work with other platforms.

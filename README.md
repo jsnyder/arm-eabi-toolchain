@@ -2,8 +2,8 @@ ARM EABI Toolchain Builder
 ==========================
 
 This toolchain builder builds a GCC and Newlib-based ARM EABI toolchain using the [Sourcery
-CodeBench Lite](http://www.mentor.com/embedded-software/sourcery-tools/sourcery-codebench/editions
-/lite-edition/) sources.  This Makefile was originally created to allow building a validated GCC
+CodeBench Lite](http://www.mentor.com/embedded-software/sourcery-tools/sourcery-codebench/editions/lite-edition/)
+sources.  This Makefile was originally created to allow building a validated GCC
 release on Mac OS X, as CodeBench Lite / G++ Lite were only provided for Windows and Linux, but this
 build also includes some optimizations for Newlib that provide smaller binaries.
 
